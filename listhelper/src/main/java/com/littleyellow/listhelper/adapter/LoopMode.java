@@ -18,7 +18,11 @@ public class LoopMode implements NumProxy{
 
     @Override
     public void iniPosition(RecyclerView recyclerView) {
-        recyclerView.scrollToPosition(getItemCount()/2 * 10000);//开始时的偏移量
+        if(null==data||data.isEmpty()){
+            return;
+        }
+        int position = getItemCount()/data.size()/2*data.size();
+        recyclerView.scrollToPosition(position);//开始时的偏移量
     }
 
     @Override

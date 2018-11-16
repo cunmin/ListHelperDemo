@@ -1,6 +1,7 @@
 package com.littleyellow.listhelperdemo;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,17 @@ import java.util.List;
  */
 
 public class TestAdapter extends BaseAdapter<String,TestAdapter.ViewHolder>{
-    public TestAdapter(List data,boolean isLoop) {
-        super(data,isLoop);
+
+    boolean isLoop;
+
+    private DisplayMetrics metric;
+
+    public TestAdapter(List data) {
+        super(data);
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v = inflater.inflate(R.layout.item_test, parent,false);
         return new ViewHolder(v);
@@ -31,6 +37,8 @@ public class TestAdapter extends BaseAdapter<String,TestAdapter.ViewHolder>{
         String msg = getItem(position);
         holder.textView.setText(msg);
     }
+
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
