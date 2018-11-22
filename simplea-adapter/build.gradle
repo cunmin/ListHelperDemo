@@ -41,3 +41,9 @@ publish{
     desc = '简单封装recyclerview适配器，简单开发各种需求'//描述，不重要
     website = 'https://github.com/cunmin/ListHelperDemo'//引用github主页
 }
+
+tasks.withType(Javadoc) {//防止编码问题
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}

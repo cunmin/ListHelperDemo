@@ -75,7 +75,7 @@ public class BannerSnapHelper extends BaseSnapHelper{
         }
         int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
         if(null!=scrollListener&&null!=numProxy&&selected!=firstVisibleItemPosition){
-            scrollListener.onSelected(numProxy.getPosition(firstVisibleItemPosition));
+            scrollListener.onSelected(numProxy.getPosition(firstVisibleItemPosition),numProxy.getRealSize());
         }
         selected = firstVisibleItemPosition;
     }

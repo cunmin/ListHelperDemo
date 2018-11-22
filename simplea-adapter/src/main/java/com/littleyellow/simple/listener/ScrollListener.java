@@ -6,7 +6,7 @@ package com.littleyellow.simple.listener;
 
 public interface ScrollListener {
 
-    void onSelected(int position);
+    void onSelected(int position,int totalSize);
 
     void onScroll(int dx);
 

@@ -30,4 +30,9 @@ public class CommonMode implements NumProxy{
     public int getPosition(int realPosition) {
         return realPosition;
     }
+
+    @Override
+    public int getRealSize() {
+        return getItemCount();
+    }
 }

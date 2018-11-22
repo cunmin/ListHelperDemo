@@ -5,10 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.littleyellow.simple.adapter.Parameters;
 import com.littleyellow.simple.listener.ScrollListener;
 import com.littleyellow.simple.util.Utils;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,17 +24,21 @@ public class MainActivity extends AppCompatActivity {
 
     LinearLayoutManager layoutManager;
 
+    LinearLayout indicator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        LeakCanary.install(getApplication());
         recyclerview = (RecyclerView) findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
+        indicator = (LinearLayout) findViewById(R.id.indicator);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerview.setLayoutManager(layoutManager);
 
         List<String> data = new ArrayList<>();
-        for(int i=0;i<20;i++){
+        for(int i=0;i<9;i++){
             data.add("..."+i+"...");
         }
         adapter = new TestAdapter(data);
@@ -47,8 +54,9 @@ public class MainActivity extends AppCompatActivity {
         .autoTime(4000)
         .scrollListener(new ScrollListener() {
             @Override
-            public void onSelected(int position) {
+            public void onSelected(int position,int totalSize) {
                 Log.e("onSelected",position+"----");
+                updataIindicator(position,totalSize);
             }
 
             @Override
@@ -58,5 +66,26 @@ public class MainActivity extends AppCompatActivity {
         })
         .build());
         recyclerview.setAdapter(adapter);
+    }
+
+    private void updataIindicator(int position,int totalSize){
+//        int indicators = indicator.getChildCount();
+//        if(indicators==totalSize){
+//            return;
+//        }
+        indicator.removeAllViews();
+        for (int i = 0; i < totalSize; i++) {
+            ImageView imageView = new ImageView(this);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(20, 20);
+            params.leftMargin = 20;
+            params.rightMargin = 20;
+            if (i == position) {
+                imageView.setImageResource(R.mipmap.bg_indicator_yet);
+            } else {
+                imageView.setImageResource(R.mipmap.bg_indicator_not);
+            }
+            indicator.addView(imageView, params);
+        }
     }
 }

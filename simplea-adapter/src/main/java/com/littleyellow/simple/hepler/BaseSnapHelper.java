@@ -4,8 +4,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.littleyellow.simple.calculate.NumProxy;
 import com.littleyellow.simple.adapter.Parameters;
+import com.littleyellow.simple.calculate.NumProxy;
 
 /**
  * Created by 小黄 on 2018/11/21.
@@ -30,8 +30,11 @@ public abstract class BaseSnapHelper {
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
         int  FirstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-        View vieww = layoutManager.findViewByPosition(FirstVisibleItemPosition);
-        recyclerview.smoothScrollBy(vieww.getLeft()-parameters.offset,0);
+        View view = layoutManager.findViewByPosition(FirstVisibleItemPosition);
+        if(null==view){
+            return;
+        }
+        recyclerview.smoothScrollBy(view.getLeft()-parameters.offset,0);
     }
 
     protected void scrollToNext(){
@@ -40,6 +43,9 @@ public abstract class BaseSnapHelper {
         }
         int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
         View view = layoutManager.findViewByPosition(firstVisibleItemPosition);
+        if(null==view){
+            return;
+        }
         recyclerview.smoothScrollBy(view.getWidth()+view.getLeft()+parameters.dividerHeight,0);
     }
 
@@ -48,9 +54,12 @@ public abstract class BaseSnapHelper {
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
         int  FirstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-        View vieww = layoutManager.findViewByPosition(FirstVisibleItemPosition);
-        int left = -vieww.getLeft();
-        int with = vieww.getWidth()/2;
+        View view = layoutManager.findViewByPosition(FirstVisibleItemPosition);
+        if(null==view){
+            return;
+        }
+        int left = -view.getLeft();
+        int with = view.getWidth()/2;
         if(left<with){
             scrollToLast();
         }else{

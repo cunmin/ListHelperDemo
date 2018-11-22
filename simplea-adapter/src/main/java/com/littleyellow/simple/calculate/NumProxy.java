@@ -13,4 +13,6 @@ public interface NumProxy {
     int getItemCount();
 
     int getPosition(int realPosition);
+
+    int getRealSize();
 }

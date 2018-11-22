@@ -28,11 +28,19 @@ public class LoopMode implements NumProxy{
 
     @Override
     public int getItemCount() {
-        return null==data?0:Integer.MAX_VALUE;
+        return null==data||data.isEmpty()?0:Integer.MAX_VALUE;
     }
 
     @Override
     public int getPosition(int realPosition) {
+        if(null==data||data.isEmpty()){
+            return 0;
+        }
         return (data.size() + realPosition % data.size())%data.size();
+    }
+
+    @Override
+    public int getRealSize() {
+        return null==data?0:data.size();
     }
 }

@@ -62,6 +62,8 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
                 params.width = (int) (parentWith/parameters.showCount);
             }else if(1!=parameters.showCount){
                 params.width = parentWith/size;
+            }else {
+                params.width = parentWith;
             }
             params.width= params.width - parameters.offset*2;
 //            params.setMargins(parameters.offset,0,parameters.offset,0);
@@ -93,7 +95,7 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
             BannerSnapHelper bannerSnapHelper = new BannerSnapHelper(recyclerView,parameters,numProxy);
             bannerSnapHelper.setScrollListener(parameters.scrollListener);
             if(-1!=position&&null!=parameters.scrollListener){
-                parameters.scrollListener.onSelected(numProxy.getPosition(position));
+                parameters.scrollListener.onSelected(numProxy.getPosition(position),numProxy.getRealSize());
             }
         }
         if(0!=parameters.dividerHeight){
