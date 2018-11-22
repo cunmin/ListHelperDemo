@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 import com.littleyellow.simple.calculate.CommItemDecoration;
 import com.littleyellow.simple.calculate.CommonMode;
-import com.littleyellow.simple.calculate.LeftRightOffset;
+import com.littleyellow.simple.calculate.LeftOffset;
 import com.littleyellow.simple.calculate.LoopMode;
 import com.littleyellow.simple.calculate.NumProxy;
 import com.littleyellow.simple.hepler.BannerSnapHelper;
@@ -105,7 +105,7 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
         if(0<parameters.offset){
 //            recyclerView.setPadding(parameters.offset,0,parameters.offset,0);
 //            recyclerView.setClipChildren(false);
-            recyclerView.addItemDecoration(new LeftRightOffset(parameters));
+            recyclerView.addItemDecoration(new LeftOffset(parameters));
         }
     }
 

@@ -1,1 +1,1 @@
-include ':app', ':simplea-dapter'
+include ':app', ':simplea-adapter'

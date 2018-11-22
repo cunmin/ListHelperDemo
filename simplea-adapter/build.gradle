@@ -8,7 +8,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -29,4 +29,15 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:recyclerview-v7:25.1.0'
     testCompile 'junit:junit:4.12'
+}
+
+apply plugin: 'com.novoda.bintray-release'
+publish{
+    repoName = 'maven'//远程仓库名字,不指明，默认是上传到maven
+    userOrg = 'littleyellow'//bintray.com的用户名
+    groupId = 'com.littleyellow'//一个唯一值，默认包名,生成的gradle依赖前缀
+    artifactId = 'simplea-adapter'//远程仓库包名称
+    publishVersion = '1.0.0'//版本号
+    desc = '简单封装recyclerview适配器，简单开发各种需求'//描述，不重要
+    website = 'https://github.com/cunmin/ListHelperDemo'//引用github主页
 }
