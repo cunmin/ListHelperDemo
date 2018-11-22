@@ -1,4 +1,4 @@
-package com.littleyellow.listhelper;
+package com.littleyellow.simple;
 
 import org.junit.Test;
 
