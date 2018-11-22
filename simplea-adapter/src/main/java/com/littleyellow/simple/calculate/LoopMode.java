@@ -22,7 +22,7 @@ public class LoopMode implements NumProxy{
             return -1;
         }
         int position = getItemCount()/data.size()/2*data.size();
-        recyclerView.scrollToPosition(position);//开始时的偏移量
+        recyclerView.scrollToPosition(position);
         return  position;
     }
 
