@@ -18,7 +18,7 @@ public class CommonMode implements NumProxy{
 
     @Override
     public int iniPosition(RecyclerView recyclerView) {
-        return -1;
+        return 0;
     }
 
     @Override

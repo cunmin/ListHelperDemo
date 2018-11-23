@@ -2,6 +2,7 @@ package com.littleyellow.simple.adapter;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.littleyellow.simple.calculate.CommItemDecoration;
@@ -12,6 +13,7 @@ import com.littleyellow.simple.calculate.NumProxy;
 import com.littleyellow.simple.hepler.BannerSnapHelper;
 import com.littleyellow.simple.hepler.TimingSnapHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,18 +22,22 @@ import java.util.List;
 
 public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<K>{
 
+    private RecyclerView recyclerView;
+
     NumProxy numProxy;
 
     protected Parameters parameters = Parameters.newBuilder().build();
 
     List<T> data;
 
+    private BannerSnapHelper bannerSnapHelper;
+
     public SimpleAdapter(List<T> data){
         this(data,null);
     }
 
     public SimpleAdapter(List<T> data, Parameters parameters) {
-        this.data = data;
+        this.data = data == null ? new ArrayList<T>() : data;
         setParameters(parameters);
     }
 
@@ -93,13 +99,15 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        int position = numProxy.iniPosition(recyclerView);//初始化偏移量
+        this.recyclerView = recyclerView;
+
         if(parameters.isPagerMode){
-            BannerSnapHelper bannerSnapHelper = new BannerSnapHelper(recyclerView,parameters,numProxy);
-            bannerSnapHelper.setScrollListener(parameters.scrollListener);
-            if(-1!=position&&null!=parameters.scrollListener){
+            bannerSnapHelper = new BannerSnapHelper(recyclerView,parameters,numProxy);
+            int position = bannerSnapHelper.initPosition();//初始化偏移量
+            if(null!=parameters.scrollListener){
                 parameters.scrollListener.onSelected(numProxy.getPosition(position),numProxy.getRealSize());
             }
+            bannerSnapHelper.setScrollListener(parameters.scrollListener);
         }
         if(0!=parameters.dividerHeight){
             recyclerView.addItemDecoration(CommItemDecoration.createHorizontal(recyclerView.getContext(), Color.TRANSPARENT,parameters.dividerHeight));
@@ -116,5 +124,22 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
 
     public T getItem(int position){
         return data.get(position);
+    }
+
+    public void setNewData(List<T> data){
+        this.data.clear();
+        this.data.addAll(data == null ? new ArrayList<T>() : data);
+        notifyDataSetChanged();
+        if(null!=recyclerView&&null!=bannerSnapHelper){
+            int position  = bannerSnapHelper.initPosition();
+            if(null!=parameters.scrollListener){
+                parameters.scrollListener.onSelected(numProxy.getPosition(position),numProxy.getRealSize());
+            }
+            Log.e("position",position+"====");
+        }
+    }
+
+    public List<T> getData() {
+        return data;
     }
 }

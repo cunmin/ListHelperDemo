@@ -74,13 +74,20 @@ public class BannerSnapHelper extends BaseSnapHelper{
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
         int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-        if(null!=scrollListener&&null!=numProxy&&selected!=firstVisibleItemPosition){
-            scrollListener.onSelected(numProxy.getPosition(firstVisibleItemPosition),numProxy.getRealSize());
+        if(null!=scrollListener&&null!=numProxy){
+            int position = numProxy.getPosition(firstVisibleItemPosition);
+            if(selected!=position){
+                scrollListener.onSelected(position,numProxy.getRealSize());
+            }
+            selected = position;
         }
-        selected = firstVisibleItemPosition;
     }
 
     public void setScrollListener(ScrollListener scrollListener) {
         this.scrollListener = scrollListener;
+    }
+
+    public int initPosition(){
+        return numProxy.iniPosition(recyclerview);
     }
 }

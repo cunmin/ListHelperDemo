@@ -1,6 +1,5 @@
 package com.littleyellow.listhelperdemo;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerview.setLayoutManager(layoutManager);
 
         List<String> data = new ArrayList<>();
-        for(int i=0;i<9;i++){
+        for(int i=0;i<3;i++){
             data.add("..."+i+"...");
         }
         adapter = new TestAdapter(data);
@@ -71,7 +70,18 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,TestActivity.class));
+//                startActivity(new Intent(MainActivity.this,TestActivity.class));
+                List<String> data = new ArrayList<>();
+                for(int i=0;i<8;i++){
+                    data.add("..."+i+"...");
+                }
+                if(adapter.getData().isEmpty()){
+                    adapter.setNewData(data);
+                }else{
+                    adapter.setNewData(null);
+                }
+
+
             }
         });
     }
