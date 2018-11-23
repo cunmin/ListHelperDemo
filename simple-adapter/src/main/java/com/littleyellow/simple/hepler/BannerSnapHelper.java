@@ -88,6 +88,11 @@ public class BannerSnapHelper extends BaseSnapHelper{
     }
 
     public int initPosition(){
-        return numProxy.iniPosition(recyclerview);
+        int position = numProxy.getInitPosition();
+        if(null==layoutManager){
+            layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
+        }
+        layoutManager.scrollToPositionWithOffset(position,parameters.offset);
+        return position;
     }
 }

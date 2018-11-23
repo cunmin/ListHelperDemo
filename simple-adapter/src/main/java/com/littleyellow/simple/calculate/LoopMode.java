@@ -1,7 +1,5 @@
 package com.littleyellow.simple.calculate;
 
-import android.support.v7.widget.RecyclerView;
-
 import java.util.List;
 
 /**
@@ -17,12 +15,11 @@ public class LoopMode implements NumProxy{
     }
 
     @Override
-    public int iniPosition(RecyclerView recyclerView) {
+    public int getInitPosition() {
         if(null==data||data.isEmpty()){
             return -1;
         }
         int position = getItemCount()/data.size()/2*data.size();
-        recyclerView.scrollToPosition(position);
         return  position;
     }
 

@@ -41,15 +41,15 @@ public class MainActivity extends AppCompatActivity {
         for(int i=0;i<3;i++){
             data.add("..."+i+"...");
         }
-        adapter = new TestAdapter(null);
+        adapter = new TestAdapter(data);
         int with = getResources().getDisplayMetrics().widthPixels- Utils.dip2px(this,20);
         adapter.setParameters(Parameters.newBuilder()
         .isLoop(true)
         .showCount(1)
         .aspectRatio(2)
 //         .dividerHeight(with)
-//        .dividerHeight(this,10)
-         .offset(this,10)
+        .dividerHeight(this,10)
+//         .offset(this,10)
 //        .itemHeight(this,50)
         .isPagerMode(true)
         .autoTime(4000)

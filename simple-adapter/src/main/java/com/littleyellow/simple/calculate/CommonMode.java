@@ -1,7 +1,5 @@
 package com.littleyellow.simple.calculate;
 
-import android.support.v7.widget.RecyclerView;
-
 import java.util.List;
 
 /**
@@ -17,8 +15,8 @@ public class CommonMode implements NumProxy{
     }
 
     @Override
-    public int iniPosition(RecyclerView recyclerView) {
-        return 0;
+    public int getInitPosition() {
+        return null==data||data.isEmpty()?-1:0;
     }
 
     @Override

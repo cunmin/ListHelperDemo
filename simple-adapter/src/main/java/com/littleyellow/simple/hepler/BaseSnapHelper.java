@@ -46,7 +46,7 @@ public abstract class BaseSnapHelper {
         if(null==view){
             return;
         }
-        recyclerview.smoothScrollBy(view.getWidth()+view.getLeft()+parameters.dividerHeight,0);
+        recyclerview.smoothScrollBy(view.getWidth()+view.getLeft(),0);
     }
 
     protected void autoScroll(){

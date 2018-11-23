@@ -37,7 +37,7 @@ publish{
     userOrg = 'littleyellow'//bintray.com的用户名
     groupId = 'com.littleyellow'//一个唯一值，默认包名,生成的gradle依赖前缀
     artifactId = 'simple-adapter'//远程仓库包名称
-    publishVersion = '1.0.1'//版本号
+    publishVersion = '1.0.2'//版本号
     desc = '简单封装recyclerview适配器，简单开发各种需求'//描述，不重要
     website = 'https://github.com/cunmin/ListHelperDemo'//引用github主页
 }
