@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i=0;i<3;i++){
             data.add("..."+i+"...");
         }
-        adapter = new TestAdapter(data);
+        adapter = new TestAdapter(null);
         int with = getResources().getDisplayMetrics().widthPixels- Utils.dip2px(this,20);
         adapter.setParameters(Parameters.newBuilder()
         .isLoop(true)

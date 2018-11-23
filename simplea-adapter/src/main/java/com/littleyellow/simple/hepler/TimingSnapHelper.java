@@ -44,15 +44,14 @@ public class TimingSnapHelper extends BaseSnapHelper{
                     isTouching = false;
                 }else if(SCROLL_STATE_IDLE == newState){
                     if(!isTouching){
-                        handler.removeMessages(0);
-                        handler.sendEmptyMessageDelayed(0,parameters.autoTime);
+                        start();
                     }
                     isTouching = false;
                 }
             }
         });
         handler = new DelayHandler(this);
-        handler.sendEmptyMessageDelayed(0,parameters.autoTime);
+        start();
     }
 
     static class DelayHandler extends Handler{
@@ -70,6 +69,15 @@ public class TimingSnapHelper extends BaseSnapHelper{
                     timingSnapHelper.scrollToNext();
             }
         }
+    }
+
+    public void start(){
+        handler.removeMessages(0);
+        handler.sendEmptyMessageDelayed(0,parameters.autoTime);
+    }
+
+    public void stop(){
+        handler.removeMessages(0);
     }
 
 }

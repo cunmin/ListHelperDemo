@@ -32,6 +32,8 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
 
     private BannerSnapHelper bannerSnapHelper;
 
+    private TimingSnapHelper timingSnapHelper;
+
     public SimpleAdapter(List<T> data){
         this(data,null);
     }
@@ -113,7 +115,7 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
             recyclerView.addItemDecoration(CommItemDecoration.createHorizontal(recyclerView.getContext(), Color.TRANSPARENT,parameters.dividerHeight));
         }
         if(0<parameters.autoTime){
-            new TimingSnapHelper(recyclerView,parameters,numProxy);
+            timingSnapHelper = new TimingSnapHelper(recyclerView,parameters,numProxy);
         }
         if(0<parameters.offset){
 //            recyclerView.setPadding(parameters.offset,0,parameters.offset,0);
@@ -136,6 +138,9 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
                 parameters.scrollListener.onSelected(numProxy.getPosition(position),numProxy.getRealSize());
             }
             Log.e("position",position+"====");
+        }
+        if(null!=timingSnapHelper){
+            timingSnapHelper.start();
         }
     }
 
