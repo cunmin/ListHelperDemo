@@ -70,6 +70,9 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
             if(0 != parameters.aspectRatio){
                 params.height = (int) (params.width/parameters.aspectRatio);
             }
+            if(0 != parameters.itemHeight){
+                params.height = parameters.itemHeight;
+            }
         }
         return viewHoder;
     }

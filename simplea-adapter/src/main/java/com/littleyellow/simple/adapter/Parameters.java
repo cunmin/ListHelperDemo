@@ -28,6 +28,8 @@ public class Parameters {
 
     public int offset;
 
+    public int itemHeight;
+
     private Parameters(Builder builder) {
         isLoop = builder.isLoop;
         showCount = builder.showCount;
@@ -38,6 +40,7 @@ public class Parameters {
         autoTime = builder.autoTime;
         scrollListener = builder.scrollListener;
         offset = builder.offset;
+        itemHeight = builder.itemHeight;
     }
 
     public static Builder newBuilder() {
@@ -55,6 +58,7 @@ public class Parameters {
         private int autoTime = -1;
         private ScrollListener scrollListener;
         private int offset;
+        private int itemHeight;
 
         private Builder() {
         }
@@ -92,14 +96,29 @@ public class Parameters {
 
         public Builder dividerHeight(int px){
             this.dividerHeight = px;
+            itemHeight = 0;
             return this;
         }
 
         public Builder dividerHeight(Context context,int dp){
             final float scale = context.getResources().getDisplayMetrics().density;
-            this.dividerHeight = (int) (dp * scale + 0.5f);
+            int px = (int) (dp * scale + 0.5f);
+            return dividerHeight(px);
+        }
+
+        public Builder itemHeight(int px){
+            this.itemHeight = px;
+            dividerHeight = 0;
             return this;
         }
+
+        public Builder itemHeight(Context context,int dp){
+            final float scale = context.getResources().getDisplayMetrics().density;
+            int px = (int) (dp * scale + 0.5f);
+            return itemHeight(px);
+        }
+
+
 
         public Builder autoTime(int delayMillis) {
             this.autoTime = delayMillis;

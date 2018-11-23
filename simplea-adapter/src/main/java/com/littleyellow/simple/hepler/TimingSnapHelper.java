@@ -1,10 +1,14 @@
 package com.littleyellow.simple.hepler;
 
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.littleyellow.simple.calculate.NumProxy;
 import com.littleyellow.simple.adapter.Parameters;
+import com.littleyellow.simple.calculate.NumProxy;
+
+import java.lang.ref.WeakReference;
 
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_FLING;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
@@ -24,14 +28,7 @@ public class TimingSnapHelper extends BaseSnapHelper{
 
     private Parameters parameters;
 
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if(!isTouching){
-                scrollToNext();
-            }
-        }
-    };
+    private DelayHandler handler;
 
     public TimingSnapHelper(final RecyclerView recyclerview, final Parameters parameters, NumProxy numProxy) {
         super(recyclerview, parameters, numProxy);
@@ -47,13 +44,32 @@ public class TimingSnapHelper extends BaseSnapHelper{
                     isTouching = false;
                 }else if(SCROLL_STATE_IDLE == newState){
                     if(!isTouching){
-                        recyclerview.removeCallbacks(runnable);
-                        recyclerview.postDelayed(runnable,parameters.autoTime);
+                        handler.removeMessages(0);
+                        handler.sendEmptyMessageDelayed(0,parameters.autoTime);
                     }
                     isTouching = false;
                 }
             }
         });
-        recyclerview.postDelayed(runnable,parameters.autoTime);
+        handler = new DelayHandler(this);
+        handler.sendEmptyMessageDelayed(0,parameters.autoTime);
     }
+
+    static class DelayHandler extends Handler{
+        final WeakReference<TimingSnapHelper> reference;
+
+        public DelayHandler(TimingSnapHelper timingSnapHelper){
+            reference = new WeakReference<>(timingSnapHelper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            TimingSnapHelper timingSnapHelper = reference.get();
+            removeMessages(0);
+            if(null!=timingSnapHelper&&!timingSnapHelper.isTouching){
+                    timingSnapHelper.scrollToNext();
+            }
+        }
+    }
+
 }

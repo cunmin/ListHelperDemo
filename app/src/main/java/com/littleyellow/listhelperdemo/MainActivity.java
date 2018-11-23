@@ -1,17 +1,18 @@
 package com.littleyellow.listhelperdemo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.littleyellow.simple.adapter.Parameters;
 import com.littleyellow.simple.listener.ScrollListener;
 import com.littleyellow.simple.util.Utils;
-import com.squareup.leakcanary.LeakCanary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LeakCanary.install(getApplication());
+
         recyclerview = (RecyclerView) findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
         indicator = (LinearLayout) findViewById(R.id.indicator);
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 //         .dividerHeight(with)
 //        .dividerHeight(this,10)
          .offset(this,10)
+//        .itemHeight(this,50)
         .isPagerMode(true)
         .autoTime(4000)
         .scrollListener(new ScrollListener() {
@@ -66,6 +68,12 @@ public class MainActivity extends AppCompatActivity {
         })
         .build());
         recyclerview.setAdapter(adapter);
+        findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,TestActivity.class));
+            }
+        });
     }
 
     private void updataIindicator(int position,int totalSize){
