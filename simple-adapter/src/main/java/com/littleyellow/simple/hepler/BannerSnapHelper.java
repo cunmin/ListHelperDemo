@@ -92,7 +92,7 @@ public class BannerSnapHelper extends BaseSnapHelper{
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
-        layoutManager.scrollToPositionWithOffset(position,parameters.offset);
+        layoutManager.scrollToPositionWithOffset(position,-parameters.dividerHeight+parameters.offset);
         return position;
     }
 }

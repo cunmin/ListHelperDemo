@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         .aspectRatio(2)
 //         .dividerHeight(with)
         .dividerHeight(this,10)
-//         .offset(this,10)
+         .offset(this,5)
 //        .itemHeight(this,50)
         .isPagerMode(true)
         .autoTime(4000)

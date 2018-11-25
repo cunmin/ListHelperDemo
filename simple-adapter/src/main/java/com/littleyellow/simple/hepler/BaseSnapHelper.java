@@ -2,6 +2,7 @@ package com.littleyellow.simple.hepler;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.littleyellow.simple.adapter.Parameters;
@@ -26,6 +27,7 @@ public abstract class BaseSnapHelper {
     }
 
     protected void scrollToLast(){
+        Log.e("scrool","scrollToLast");
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
@@ -34,19 +36,20 @@ public abstract class BaseSnapHelper {
         if(null==view){
             return;
         }
-        recyclerview.smoothScrollBy(view.getLeft()-parameters.offset,0);
+        recyclerview.smoothScrollBy(view.getLeft()+parameters.dividerHeight+parameters.offset,0);
     }
 
     protected void scrollToNext(){
+        Log.e("scrool","scrollToNext");
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
         int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-        View view = layoutManager.findViewByPosition(firstVisibleItemPosition);
+        View view = layoutManager.findViewByPosition(firstVisibleItemPosition+1);
         if(null==view){
             return;
         }
-        recyclerview.smoothScrollBy(view.getWidth()+view.getLeft(),0);
+        recyclerview.smoothScrollBy(view.getLeft()+parameters.dividerHeight+parameters.offset,0);
     }
 
     protected void autoScroll(){
