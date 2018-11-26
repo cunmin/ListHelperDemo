@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.littleyellow.simple.calculate.CommItemDecoration;
 import com.littleyellow.simple.calculate.CommonMode;
+import com.littleyellow.simple.calculate.LeftOffset;
 import com.littleyellow.simple.calculate.LoopMode;
 import com.littleyellow.simple.calculate.NumProxy;
 import com.littleyellow.simple.hepler.BannerSnapHelper;
@@ -61,25 +62,29 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
     @Override
     public final K onCreateViewHolder(ViewGroup parent, int viewType) {
         K viewHoder = onCreateHolder(parent,viewType);
-        if(parameters.showCount>0){
+//        if(parameters.showCount>0){
+//            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) viewHoder.itemView.getLayoutParams();
+//            int size = getRealityCount();
+//            int parentWith = 0<parameters.viewWith?parameters.viewWith:viewHoder.itemView.getResources().getDisplayMetrics().widthPixels;
+//            if(size>parameters.showCount){
+//                params.width = (int) (parentWith/(parameters.showCount))-parameters.dividerHeight;
+//            }else if(1!=parameters.showCount){
+//                params.width = parentWith/size-parameters.dividerHeight;
+//            }else {
+//                params.width = parentWith;
+//            }
+//            if(0 != parameters.aspectRatio){
+//                params.height = (int) (params.width/parameters.aspectRatio);
+//            }
+//            if(0 != parameters.itemHeight){
+//                params.height = parameters.itemHeight;
+//            }
+//        }
+        if(null!=parameters.itemHandle){
             RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) viewHoder.itemView.getLayoutParams();
             int size = getRealityCount();
-            int parentWith = 0<parameters.viewWith?parameters.viewWith:viewHoder.itemView.getResources().getDisplayMetrics().widthPixels;
-            if(size>parameters.showCount){
-                params.width = (int) (parentWith/parameters.showCount);
-            }else if(1!=parameters.showCount){
-                params.width = parentWith/size;
-            }else {
-                params.width = parentWith;
-            }
-            params.width= params.width - parameters.offset*2;
-//            params.setMargins(parameters.offset,0,parameters.offset,0);
-            if(0 != parameters.aspectRatio){
-                params.height = (int) (params.width/parameters.aspectRatio);
-            }
-            if(0 != parameters.itemHeight){
-                params.height = parameters.itemHeight;
-            }
+            parameters.parentWidth = 0<parameters.parentWidth?parameters.parentWidth:viewHoder.itemView.getResources().getDisplayMetrics().widthPixels;
+            parameters.itemHandle.setItemParams(params,parameters.parentWidth,size);
         }
         return viewHoder;
     }
@@ -116,10 +121,8 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
         if(0<parameters.autoTime){
             timingSnapHelper = new TimingSnapHelper(recyclerView,parameters,numProxy);
         }
-        if(0<parameters.offset){
-//            recyclerView.setPadding(parameters.offset,0,parameters.offset,0);
-//            recyclerView.setClipChildren(false);
-//            recyclerView.addItemDecoration(new LeftOffset(parameters));
+        if(0<parameters.offset&&!parameters.isLoop){
+            recyclerView.addItemDecoration(new LeftOffset(parameters));
         }
     }
 

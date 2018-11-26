@@ -57,7 +57,7 @@ public class BannerSnapHelper extends BaseSnapHelper{
             @Override
             public boolean onFling(int velocityX, int velocityY) {
                 if(velocityX<0){
-                    scrollToLast();
+                    scrollToCurrent();
                 }else{
                     scrollToNext();
                 }
@@ -75,6 +75,7 @@ public class BannerSnapHelper extends BaseSnapHelper{
         }
         int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
         if(null!=scrollListener&&null!=numProxy){
+            firstVisibleItemPosition = parameters.offset>0?firstVisibleItemPosition+1:firstVisibleItemPosition;
             int position = numProxy.getPosition(firstVisibleItemPosition);
             if(selected!=position){
                 scrollListener.onSelected(position,numProxy.getRealSize());
@@ -92,7 +93,7 @@ public class BannerSnapHelper extends BaseSnapHelper{
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
-        layoutManager.scrollToPositionWithOffset(position,-parameters.dividerHeight+parameters.offset);
+        layoutManager.scrollToPositionWithOffset(position,parameters.offset);
         return position;
     }
 }

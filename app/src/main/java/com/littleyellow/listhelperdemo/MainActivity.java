@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.littleyellow.simple.adapter.Parameters;
+import com.littleyellow.simple.calculate.ItemHandle;
 import com.littleyellow.simple.listener.ScrollListener;
 import com.littleyellow.simple.util.Utils;
 
@@ -38,21 +39,23 @@ public class MainActivity extends AppCompatActivity {
         recyclerview.setLayoutManager(layoutManager);
 
         List<String> data = new ArrayList<>();
-        for(int i=0;i<3;i++){
+        for(int i=0;i<4;i++){
             data.add("..."+i+"...");
         }
         adapter = new TestAdapter(data);
-        int with = getResources().getDisplayMetrics().widthPixels- Utils.dip2px(this,20);
         adapter.setParameters(Parameters.newBuilder()
         .isLoop(true)
-        .showCount(1)
-        .aspectRatio(2)
-//         .dividerHeight(with)
-        .dividerHeight(this,10)
          .offset(this,5)
-//        .itemHeight(this,50)
+        .dividerHeight(this,10)
         .isPagerMode(true)
         .autoTime(4000)
+        .itemHandle(new ItemHandle() {
+            @Override
+            public void setItemParams(RecyclerView.LayoutParams params, int parentWith, int totalSize) {
+                params.width = parentWith- Utils.dip2px(MainActivity.this,10);
+                params.height = params.width/2;
+            }
+        })
         .scrollListener(new ScrollListener() {
             @Override
             public void onSelected(int position,int totalSize) {

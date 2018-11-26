@@ -36,7 +36,7 @@ public abstract class BaseSnapHelper {
         if(null==view){
             return;
         }
-        recyclerview.smoothScrollBy(view.getLeft()+parameters.dividerHeight+parameters.offset,0);
+        recyclerview.smoothScrollBy(view.getLeft()-parameters.dividerHeight+parameters.offset,0);
     }
 
     protected void scrollToNext(){
@@ -45,11 +45,24 @@ public abstract class BaseSnapHelper {
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
         int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-        View view = layoutManager.findViewByPosition(firstVisibleItemPosition+1);
+        View view = layoutManager.findViewByPosition(firstVisibleItemPosition);
         if(null==view){
             return;
         }
-        recyclerview.smoothScrollBy(view.getLeft()+parameters.dividerHeight+parameters.offset,0);
+        recyclerview.smoothScrollBy(view.getRight()+parameters.dividerHeight-parameters.offset,0);
+    }
+
+    protected void scrollToCurrent(){
+        Log.e("scrool","scrollToCurrent");
+        if(null==layoutManager){
+            layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
+        }
+        int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+        View view = layoutManager.findViewByPosition(firstVisibleItemPosition);
+        if(null==view){
+            return;
+        }
+        recyclerview.smoothScrollBy(view.getLeft()-parameters.offset,0);
     }
 
     protected void autoScroll(){
@@ -64,7 +77,7 @@ public abstract class BaseSnapHelper {
         int left = -view.getLeft();
         int with = view.getWidth()/2;
         if(left<with){
-            scrollToLast();
+            scrollToCurrent();
         }else{
             scrollToNext();
         }

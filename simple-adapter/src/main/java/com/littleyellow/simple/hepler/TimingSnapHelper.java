@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.littleyellow.simple.adapter.Parameters;
 import com.littleyellow.simple.calculate.NumProxy;
@@ -43,9 +44,7 @@ public class TimingSnapHelper extends BaseSnapHelper{
                 }else if(SCROLL_STATE_FLING == newState){
                     isTouching = false;
                 }else if(SCROLL_STATE_IDLE == newState){
-                    if(!isTouching){
-                        start();
-                    }
+                    start();
                     isTouching = false;
                 }
             }
@@ -80,4 +79,17 @@ public class TimingSnapHelper extends BaseSnapHelper{
         handler.removeMessages(0);
     }
 
+    @Override
+    protected void scrollToNext() {
+        if(null==layoutManager){
+            layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
+        }
+        int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+        firstVisibleItemPosition = parameters.offset>0?firstVisibleItemPosition+1:firstVisibleItemPosition;
+        View view = layoutManager.findViewByPosition(firstVisibleItemPosition);
+        if(null==view){
+            return;
+        }
+        recyclerview.smoothScrollBy(view.getRight()+parameters.dividerHeight-parameters.offset,0);
+    }
 }
