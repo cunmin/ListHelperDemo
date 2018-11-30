@@ -27,6 +27,8 @@ public class Parameters {
 
     public ItemHandle itemHandle;
 
+    public int section;
+
     private Parameters(Builder builder) {
         isLoop = builder.isLoop;
         parentWidth = builder.parentWidth;
@@ -36,6 +38,7 @@ public class Parameters {
         scrollListener = builder.scrollListener;
         offset = builder.offset;
         itemHandle = builder.itemHandle;
+        section = builder.section;
     }
 
     public static Builder newBuilder() {
@@ -52,6 +55,7 @@ public class Parameters {
         private ScrollListener scrollListener;
         private int offset;
         private ItemHandle itemHandle;
+        private int section;
 
         private Builder() {
         }
@@ -110,6 +114,10 @@ public class Parameters {
             return this;
         }
 
+        public Builder section(int section) {
+            this.section = section;
+            return this;
+        }
 
 
         public Parameters build() {

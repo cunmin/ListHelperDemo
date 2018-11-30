@@ -1,4 +1,4 @@
-package com.littleyellow.simple.hepler;
+package com.littleyellow.simple.helper;
 
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +14,7 @@ import java.lang.ref.WeakReference;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_FLING;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
+import static com.littleyellow.simple.util.Utils.canCompleScroll;
 
 /**
  * Created by 小黄 on 2018/11/19.
@@ -31,10 +32,13 @@ public class TimingSnapHelper extends BaseSnapHelper{
 
     private DelayHandler handler;
 
+    private final NumProxy numProxy;
+
     public TimingSnapHelper(final RecyclerView recyclerview, final Parameters parameters, NumProxy numProxy) {
-        super(recyclerview, parameters, numProxy);
+        super(recyclerview, parameters);
         this.recyclerview = recyclerview;
         this.parameters = parameters;
+        this.numProxy = numProxy;
         layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -81,15 +85,27 @@ public class TimingSnapHelper extends BaseSnapHelper{
 
     @Override
     protected void scrollToNext() {
-        if(null==layoutManager){
-            layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
-        }
-        int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-        firstVisibleItemPosition = parameters.offset>0?firstVisibleItemPosition+1:firstVisibleItemPosition;
-        View view = layoutManager.findViewByPosition(firstVisibleItemPosition);
-        if(null==view){
+//        if(null==layoutManager){
+//            layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
+//        }
+//        int  position = layoutManager.findFirstVisibleItemPosition();
+//        View view = layoutManager.findViewByPosition(position);
+//        if(null==view){
+//            return;
+//        }
+//        if(view.getRight()+parameters.dividerHeight-parameters.offset==0){
+//            view = layoutManager.findViewByPosition(position+1);
+//        }
+//        if(null==view){
+//            return;
+//        }
+        View firstView = recyclerview.findChildViewUnder(parameters.offset,0);
+        if(null==firstView){
             return;
         }
-        recyclerview.smoothScrollBy(view.getRight()+parameters.dividerHeight-parameters.offset,0);
+        boolean canScroll = canCompleScroll(recyclerview,parameters);
+        if(canScroll){
+            recyclerview.smoothScrollBy(firstView.getRight()+parameters.dividerHeight-parameters.offset,0);
+        }
     }
 }

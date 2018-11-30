@@ -3,6 +3,7 @@ package com.littleyellow.listhelperdemo;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,8 +23,11 @@ public class TestAdapter extends SimpleAdapter<String,TestAdapter.ViewHolder> {
 
     private DisplayMetrics metric;
 
-    public TestAdapter(List data) {
+    private View.OnTouchListener touchListener;
+
+    public TestAdapter(List data,View.OnTouchListener touchListener) {
         super(data);
+        this.touchListener = touchListener;
     }
 
     @Override
@@ -35,14 +39,26 @@ public class TestAdapter extends SimpleAdapter<String,TestAdapter.ViewHolder> {
 
     @Override
     public void onBindHolder(ViewHolder holder, final int position) {
-        String msg = getItem(position);
-        holder.textView.setText(msg);
+        int section = parameters.section;
+        int startIndex = position*section;
+        int size = null==getData()||getData().isEmpty()?0:getData().size();
+        int endIndex = startIndex+section-1;
+        endIndex = endIndex<size?endIndex:size-1;
+        String text = startIndex==endIndex?startIndex+"":startIndex+"~"+endIndex;
+        holder.textView.setText(text+"");
         holder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(v.getContext(),position+"",Toast.LENGTH_SHORT).show();
             }
         });
+        holder.textView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
+
     }
 
 

@@ -1,15 +1,17 @@
-package com.littleyellow.simple.hepler;
+package com.littleyellow.simple.helper;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
-import com.littleyellow.simple.calculate.NumProxy;
 import com.littleyellow.simple.adapter.Parameters;
+import com.littleyellow.simple.calculate.NumProxy;
 import com.littleyellow.simple.listener.ScrollListener;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_FLING;
-import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
+import static com.littleyellow.simple.util.Utils.canCompleScroll;
 
 /**
  * Created by 小黄 on 2018/11/19.
@@ -31,8 +33,8 @@ public class BannerSnapHelper extends BaseSnapHelper{
 
     private int selected = -1;
 
-    public BannerSnapHelper(RecyclerView recyclerview, Parameters parameters, NumProxy numProxy) {
-        super(recyclerview, parameters, numProxy);
+    public BannerSnapHelper(final RecyclerView recyclerview, final Parameters parameters, NumProxy numProxy) {
+        super(recyclerview, parameters);
         this.recyclerview = recyclerview;
         this.parameters = parameters;
         this.numProxy = numProxy;
@@ -59,7 +61,12 @@ public class BannerSnapHelper extends BaseSnapHelper{
                 if(velocityX<0){
                     scrollToCurrent();
                 }else{
-                    scrollToNext();
+                    boolean canScroll = canCompleScroll(recyclerview,parameters);
+                    if(canScroll){
+                        scrollToNext();
+                    }else{
+                        scrollToCurrent();
+                    }
                 }
                 onSelected();
                 return true;
@@ -73,10 +80,12 @@ public class BannerSnapHelper extends BaseSnapHelper{
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
-        int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-        if(null!=scrollListener&&null!=numProxy){
-            firstVisibleItemPosition = parameters.offset>0?firstVisibleItemPosition+1:firstVisibleItemPosition;
-            int position = numProxy.getPosition(firstVisibleItemPosition);
+        int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+        View firstView = recyclerview.findChildViewUnder(parameters.offset,0);
+        if(null!=scrollListener&&null!=numProxy&&null!=firstView){
+//            firstVisibleItemPosition = parameters.offset>0?firstVisibleItemPosition+1:firstVisibleItemPosition;
+            int firstPosition = layoutManager.getPosition(firstView);
+            int position = numProxy.getPosition(firstPosition);
             if(selected!=position){
                 scrollListener.onSelected(position,numProxy.getRealSize());
             }

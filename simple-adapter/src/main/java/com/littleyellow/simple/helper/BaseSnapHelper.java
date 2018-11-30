@@ -1,12 +1,10 @@
-package com.littleyellow.simple.hepler;
+package com.littleyellow.simple.helper;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.littleyellow.simple.adapter.Parameters;
-import com.littleyellow.simple.calculate.NumProxy;
 
 /**
  * Created by 小黄 on 2018/11/21.
@@ -20,14 +18,13 @@ public abstract class BaseSnapHelper {
 
     private Parameters parameters;
 
-    public BaseSnapHelper(RecyclerView recyclerview, Parameters parameters, NumProxy numProxy){
+    public BaseSnapHelper(RecyclerView recyclerview, Parameters parameters){
         this.recyclerview = recyclerview;
         this.parameters = parameters;
         layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
     }
 
     protected void scrollToLast(){
-        Log.e("scrool","scrollToLast");
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
@@ -40,7 +37,6 @@ public abstract class BaseSnapHelper {
     }
 
     protected void scrollToNext(){
-        Log.e("scrool","scrollToNext");
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
@@ -53,7 +49,6 @@ public abstract class BaseSnapHelper {
     }
 
     protected void scrollToCurrent(){
-        Log.e("scrool","scrollToCurrent");
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
@@ -76,7 +71,7 @@ public abstract class BaseSnapHelper {
         }
         int left = -view.getLeft();
         int with = view.getWidth()/2;
-        if(left<with){
+        if(left<=with){
             scrollToCurrent();
         }else{
             scrollToNext();

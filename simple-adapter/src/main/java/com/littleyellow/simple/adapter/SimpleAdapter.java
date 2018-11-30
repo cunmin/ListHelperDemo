@@ -1,6 +1,7 @@
 package com.littleyellow.simple.adapter;
 
 import android.graphics.Color;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -10,8 +11,10 @@ import com.littleyellow.simple.calculate.CommonMode;
 import com.littleyellow.simple.calculate.LeftOffset;
 import com.littleyellow.simple.calculate.LoopMode;
 import com.littleyellow.simple.calculate.NumProxy;
-import com.littleyellow.simple.hepler.BannerSnapHelper;
-import com.littleyellow.simple.hepler.TimingSnapHelper;
+import com.littleyellow.simple.calculate.SectionMode;
+import com.littleyellow.simple.helper.BannerSnapHelper;
+import com.littleyellow.simple.helper.SlidingConflictHelper;
+import com.littleyellow.simple.helper.TimingSnapHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +27,7 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
 
     private RecyclerView recyclerView;
 
-    NumProxy numProxy;
+    protected NumProxy numProxy;
 
     protected Parameters parameters = Parameters.newBuilder().build();
 
@@ -49,6 +52,9 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
         }
         this.parameters = parameters;
         numProxy = parameters.isLoop?new LoopMode(data):new CommonMode(data);
+        if(1<parameters.section){
+            numProxy = new SectionMode(numProxy,parameters.section);
+        }
     }
 
     public Parameters getParameters() {
@@ -96,17 +102,24 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
 
     @Override
     public int getItemCount() {
-        return numProxy.getItemCount();
+        int itemCount = numProxy.getItemCount();
+        return itemCount;
     }
 
     public int getRealityCount(){
-        return null==data?0:data.size();
+        int realityCount = numProxy.getRealSize();
+        return realityCount;
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
-
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if(null==layoutManager||!(layoutManager instanceof LinearLayoutManager)) {
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
+            linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            recyclerView.setLayoutManager(linearLayoutManager);
+        }
         if(parameters.isPagerMode){
             bannerSnapHelper = new BannerSnapHelper(recyclerView,parameters,numProxy);
             int position = bannerSnapHelper.initPosition();//初始化偏移量
@@ -124,6 +137,7 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
         if(0<parameters.offset&&!parameters.isLoop){
             recyclerView.addItemDecoration(new LeftOffset(parameters));
         }
+        recyclerView.addOnItemTouchListener(new SlidingConflictHelper(recyclerView.getContext()));
     }
 
     public T getItem(int position){
