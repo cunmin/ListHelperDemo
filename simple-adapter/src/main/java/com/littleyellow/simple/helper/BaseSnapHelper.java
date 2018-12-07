@@ -6,6 +6,8 @@ import android.view.View;
 
 import com.littleyellow.simple.adapter.Parameters;
 
+import static com.littleyellow.simple.util.Utils.getFirstView;
+
 /**
  * Created by 小黄 on 2018/11/21.
  */
@@ -40,8 +42,9 @@ public abstract class BaseSnapHelper {
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
-        int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-        View view = layoutManager.findViewByPosition(firstVisibleItemPosition);
+//        int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+//        View view = layoutManager.findViewByPosition(firstVisibleItemPosition);
+        View view = getFirstView(recyclerview,parameters);
         if(null==view){
             return;
         }
@@ -52,8 +55,9 @@ public abstract class BaseSnapHelper {
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
-        int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-        View view = layoutManager.findViewByPosition(firstVisibleItemPosition);
+//        int  firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+//        View view = layoutManager.findViewByPosition(firstVisibleItemPosition);
+        View view = getFirstView(recyclerview,parameters);
         if(null==view){
             return;
         }
@@ -64,12 +68,13 @@ public abstract class BaseSnapHelper {
         if(null==layoutManager){
             layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         }
-        int  FirstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-        View view = layoutManager.findViewByPosition(FirstVisibleItemPosition);
+//        int  FirstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+//        View view = layoutManager.findViewByPosition(FirstVisibleItemPosition);
+        View view = getFirstView(recyclerview,parameters);
         if(null==view){
             return;
         }
-        int left = -view.getLeft();
+        int left = parameters.offset-view.getLeft();
         int with = view.getWidth()/2;
         if(left<=with){
             scrollToCurrent();

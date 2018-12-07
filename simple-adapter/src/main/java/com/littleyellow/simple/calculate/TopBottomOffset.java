@@ -10,20 +10,18 @@ import com.littleyellow.simple.adapter.Parameters;
  * Created by 小黄 on 2018/11/22.
  */
 
-public class LeftOffset extends RecyclerView.ItemDecoration{
+public class TopBottomOffset extends RecyclerView.ItemDecoration{
 
     private Parameters parameters;
 
-    public LeftOffset(Parameters parameters) {
+    public TopBottomOffset(Parameters parameters) {
         this.parameters = parameters;
     }
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
-        int postion = parent.getChildAdapterPosition(view);
-        if(0 == postion){
-            outRect.left = parameters.offset;
-        }
+        outRect.top = parameters.itemPaddingTo;
+        outRect.bottom = parameters.itemPaddingBottom;
     }
 }

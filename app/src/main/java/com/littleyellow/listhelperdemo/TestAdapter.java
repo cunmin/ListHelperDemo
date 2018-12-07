@@ -38,17 +38,13 @@ public class TestAdapter extends SimpleAdapter<String,TestAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindHolder(ViewHolder holder, final int position) {
-        int section = parameters.section;
-        int startIndex = position*section;
-        int size = null==getData()||getData().isEmpty()?0:getData().size();
-        int endIndex = startIndex+section-1;
-        endIndex = endIndex<size?endIndex:size-1;
-        String text = startIndex==endIndex?startIndex+"":startIndex+"~"+endIndex;
-        holder.textView.setText(text+"");
+    public void onBindHolder(final ViewHolder holder, final int position) {
+        holder.textView.setText(position+"");
         holder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                holder.itemView.setTranslationX(v.getWidth()/2);
+                holder.textView.setText(position+"-"+holder.itemView.getLeft());
                 Toast.makeText(v.getContext(),position+"",Toast.LENGTH_SHORT).show();
             }
         });
@@ -58,10 +54,25 @@ public class TestAdapter extends SimpleAdapter<String,TestAdapter.ViewHolder> {
                 return false;
             }
         });
-
     }
 
-
+    @Override
+    public void onBindSectionHolder(ViewHolder holder, final int startPosition, int endPosition) {
+        String text = startPosition==endPosition?startPosition+"":startPosition+"~"+endPosition;
+        holder.textView.setText(text+"");
+        holder.textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(),startPosition+"",Toast.LENGTH_SHORT).show();
+            }
+        });
+        holder.textView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 

@@ -2,6 +2,7 @@ package com.littleyellow.simple.util;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.littleyellow.simple.adapter.Parameters;
 
@@ -25,6 +26,10 @@ public class Utils {
         }else{
             return true;
         }
+    }
+
+    public static View getFirstView(RecyclerView rv, Parameters pt){
+        return rv.findChildViewUnder(pt.offset,pt.itemPaddingTo);
     }
 
 }

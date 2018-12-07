@@ -3,7 +3,9 @@ package com.littleyellow.simple.adapter;
 import android.content.Context;
 
 import com.littleyellow.simple.calculate.ItemHandle;
+import com.littleyellow.simple.calculate.ItemTransformer;
 import com.littleyellow.simple.listener.ScrollListener;
+import com.littleyellow.simple.util.Utils;
 
 /**
  * Created by 小黄 on 2018/11/14.
@@ -29,6 +31,16 @@ public class Parameters {
 
     public int section;
 
+    public int itemPaddingTo;
+
+    public int itemPaddingBottom;
+
+    public ItemTransformer transformer;
+
+    public int width;
+
+    public int height;
+
     private Parameters(Builder builder) {
         isLoop = builder.isLoop;
         parentWidth = builder.parentWidth;
@@ -39,6 +51,11 @@ public class Parameters {
         offset = builder.offset;
         itemHandle = builder.itemHandle;
         section = builder.section;
+        itemPaddingTo = builder.itemPaddingTop;
+        itemPaddingBottom = builder.itemPaddingBottom;
+        transformer = builder.transformer;
+        width = builder.width;
+        height = builder.height;
     }
 
     public static Builder newBuilder() {
@@ -55,7 +72,12 @@ public class Parameters {
         private ScrollListener scrollListener;
         private int offset;
         private ItemHandle itemHandle;
-        private int section;
+        private int section = 1;
+        private int itemPaddingTop;
+        private int itemPaddingBottom;
+        private ItemTransformer transformer;
+        private int width;
+        private int height;
 
         private Builder() {
         }
@@ -116,6 +138,43 @@ public class Parameters {
 
         public Builder section(int section) {
             this.section = section;
+            return this;
+        }
+
+        public Builder itemPaddingTop(Context context,int topDp) {
+            this.itemPaddingTop = Utils.dip2px(context,topDp);
+            return this;
+        }
+
+        public Builder itemPaddingBottom(Context context,int bottomDp) {
+            this.itemPaddingBottom = Utils.dip2px(context,bottomDp);
+            return this;
+        }
+
+        public Builder itemPaddingTop(int itemPaddingTop) {
+            this.itemPaddingTop = itemPaddingTop;
+            return this;
+        }
+
+        public Builder itemPaddingBottom(int itemPaddingBottom) {
+            this.itemPaddingBottom = itemPaddingBottom;
+            return this;
+        }
+
+        public Builder transformer(ItemTransformer transformer) {
+            this.transformer = transformer;
+            return this;
+        }
+
+        public Builder widthHeight(int width,int height) {
+            this.width = width;
+            this.height = height;
+            return this;
+        }
+
+        public Builder widthHeight(Context context,int widthDp,int heightDp) {
+            this.width = Utils.dip2px(context,widthDp);
+            this.height = Utils.dip2px(context,heightDp);
             return this;
         }
 

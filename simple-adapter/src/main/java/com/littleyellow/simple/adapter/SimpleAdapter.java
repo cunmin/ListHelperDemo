@@ -12,6 +12,8 @@ import com.littleyellow.simple.calculate.LeftOffset;
 import com.littleyellow.simple.calculate.LoopMode;
 import com.littleyellow.simple.calculate.NumProxy;
 import com.littleyellow.simple.calculate.SectionMode;
+import com.littleyellow.simple.calculate.TopBottomOffset;
+import com.littleyellow.simple.calculate.TransformerHelper;
 import com.littleyellow.simple.helper.BannerSnapHelper;
 import com.littleyellow.simple.helper.SlidingConflictHelper;
 import com.littleyellow.simple.helper.TimingSnapHelper;
@@ -65,6 +67,8 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
 
     public abstract void onBindHolder(K holder, int position);
 
+    public void onBindSectionHolder(K holder, int startPosition,int endPosition){}
+
     @Override
     public final K onCreateViewHolder(ViewGroup parent, int viewType) {
         K viewHoder = onCreateHolder(parent,viewType);
@@ -88,16 +92,26 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
 //        }
         if(null!=parameters.itemHandle){
             RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) viewHoder.itemView.getLayoutParams();
-            int size = getRealityCount();
-            parameters.parentWidth = 0<parameters.parentWidth?parameters.parentWidth:viewHoder.itemView.getResources().getDisplayMetrics().widthPixels;
-            parameters.itemHandle.setItemParams(params,parameters.parentWidth,size);
+              params.width = parameters.width;
+              params.height = parameters.height;
+//            int size = getRealityCount();
+//            parameters.parentWidth = 0<parameters.parentWidth?parameters.parentWidth:viewHoder.itemView.getResources().getDisplayMetrics().widthPixels;
+//            parameters.itemHandle.setItemParams(params,parameters.parentWidth,size);
         }
         return viewHoder;
     }
 
     @Override
     public void onBindViewHolder(K holder, int position) {
-        onBindHolder(holder,numProxy.getPosition(position));
+        if(parameters.section>1){
+            int size = null==data||data.isEmpty()?0:data.size();
+            int startIndex = numProxy.getPosition(position)*parameters.section;
+            int endIndex = startIndex+parameters.section-1;
+            endIndex = endIndex<size?endIndex:size-1;
+            onBindSectionHolder(holder,startIndex,endIndex);
+        }else{
+            onBindHolder(holder,numProxy.getPosition(position));
+        }
     }
 
     @Override
@@ -137,7 +151,14 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
         if(0<parameters.offset&&!parameters.isLoop){
             recyclerView.addItemDecoration(new LeftOffset(parameters));
         }
+        if(0!=parameters.itemPaddingTo||0!=parameters.itemPaddingBottom){
+            recyclerView.addItemDecoration(new TopBottomOffset(parameters));
+        }
+        if(null!=parameters.transformer){
+            new TransformerHelper(recyclerView,parameters);
+        }
         recyclerView.addOnItemTouchListener(new SlidingConflictHelper(recyclerView.getContext()));
+
     }
 
     public T getItem(int position){

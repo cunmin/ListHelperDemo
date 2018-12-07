@@ -37,7 +37,9 @@ public class SectionMode implements NumProxy {
 
     @Override
     public int getPosition(int realPosition) {
-        int realPos = numProxy.getPosition(realPosition);
+        int realSize = getRealSize();
+        int realPos =  (realSize + realPosition % realSize)%realSize;
+//        int realPos = numProxy.getPosition(realPosition);
         return realPos;//realPos*section+(0==realPos%section?0:1);
     }
 

@@ -15,6 +15,7 @@ import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_FLING;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
 import static com.littleyellow.simple.util.Utils.canCompleScroll;
+import static com.littleyellow.simple.util.Utils.getFirstView;
 
 /**
  * Created by 小黄 on 2018/11/19.
@@ -99,7 +100,7 @@ public class TimingSnapHelper extends BaseSnapHelper{
 //        if(null==view){
 //            return;
 //        }
-        View firstView = recyclerview.findChildViewUnder(parameters.offset,0);
+        View firstView = getFirstView(recyclerview,parameters);
         if(null==firstView){
             return;
         }
