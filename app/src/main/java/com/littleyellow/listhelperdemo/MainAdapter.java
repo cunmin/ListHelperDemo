@@ -111,7 +111,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                 viewWidth = (int) (parentWidth/1.5- Utils.dip2px(context,12));
                 offset = (parentWidth-viewWidth)/2;
                 adapter.setParameters(Parameters.newBuilder()
-                        .isLoop(true)
+//                        .isLoop(true)
                         .offset(offset)
 //                .dividerHeight(dividerHeight)
                         .maxScrollNum(1)

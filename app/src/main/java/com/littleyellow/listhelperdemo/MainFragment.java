@@ -48,8 +48,7 @@ public class MainFragment extends LazyFragment {
             boolean start;
             @Override
             public void onClick(View v) {
-
-                adapter.smoothScrollToPosition(adapter.getSnapPosition()+1);
+                adapter.smoothScrollToPosition(adapter.getPosition()+1);
                 start = !start;
 
             }

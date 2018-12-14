@@ -179,8 +179,15 @@ public abstract class LinearAdapter<T,K extends RecyclerView.ViewHolder> extends
     }
 
     public void smoothScrollToPosition(int position){
-        position = numProxy.toRealPosition(position);
-        recyclerView.smoothScrollToPosition(position);
+        if(numProxy.isLoop()){
+            int position2 = getPosition();
+            int diff = position-position2;
+            recyclerView.smoothScrollToPosition(getRealPosition()+diff);
+        }else{
+            if(0<=position&&position<numProxy.getItemCount()){
+                recyclerView.smoothScrollToPosition(position);
+            }
+        }
     }
 
     public void scrollToPosition(int position){
@@ -189,7 +196,11 @@ public abstract class LinearAdapter<T,K extends RecyclerView.ViewHolder> extends
         layoutManager.scrollToPositionWithOffset(position,parameters.offset);
     }
 
-    public int getSnapPosition(){
+    public int getPosition(){
         return numProxy.toPosition(transformerHelper.getSnapPosition());
+    }
+
+    public int getRealPosition(){
+        return transformerHelper.getSnapPosition();
     }
 }
