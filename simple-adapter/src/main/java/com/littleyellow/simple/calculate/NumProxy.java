@@ -10,7 +10,11 @@ public interface NumProxy {
 
     int getItemCount();
 
-    int getPosition(int realPosition);
+    int toPosition(int realPosition);
+
+    int toRealPosition(int position);
 
     int getRealSize();
+
+    boolean isLoop();
 }

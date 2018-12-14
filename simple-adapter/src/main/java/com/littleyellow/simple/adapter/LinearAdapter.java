@@ -3,18 +3,17 @@ package com.littleyellow.simple.adapter;
 import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ViewGroup;
 
 import com.littleyellow.simple.calculate.CommItemDecoration;
 import com.littleyellow.simple.calculate.CommonMode;
-import com.littleyellow.simple.calculate.LeftOffset;
+import com.littleyellow.simple.calculate.FirstOffsetDecoration;
 import com.littleyellow.simple.calculate.LoopMode;
 import com.littleyellow.simple.calculate.NumProxy;
 import com.littleyellow.simple.calculate.SectionMode;
 import com.littleyellow.simple.calculate.TopBottomOffset;
-import com.littleyellow.simple.calculate.TransformerHelper;
-import com.littleyellow.simple.helper.BannerSnapHelper;
+import com.littleyellow.simple.transformer.TransformerHelper;
+import com.littleyellow.simple.helper.LinearSnapHelper;
 import com.littleyellow.simple.helper.SlidingConflictHelper;
 import com.littleyellow.simple.helper.TimingSnapHelper;
 
@@ -25,7 +24,7 @@ import java.util.List;
  * Created by 小黄 on 2018/8/23.
  */
 
-public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<K>{
+public abstract class LinearAdapter<T,K extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<K>{
 
     private RecyclerView recyclerView;
 
@@ -35,15 +34,14 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
 
     List<T> data;
 
-    private BannerSnapHelper bannerSnapHelper;
-
     private TimingSnapHelper timingSnapHelper;
+    private TransformerHelper transformerHelper;
 
-    public SimpleAdapter(List<T> data){
+    public LinearAdapter(List<T> data){
         this(data,null);
     }
 
-    public SimpleAdapter(List<T> data, Parameters parameters) {
+    public LinearAdapter(List<T> data, Parameters parameters) {
         this.data = data == null ? new ArrayList<T>() : data;
         setParameters(parameters);
     }
@@ -72,31 +70,15 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
     @Override
     public final K onCreateViewHolder(ViewGroup parent, int viewType) {
         K viewHoder = onCreateHolder(parent,viewType);
-//        if(parameters.showCount>0){
-//            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) viewHoder.itemView.getLayoutParams();
-//            int size = getRealityCount();
-//            int parentWith = 0<parameters.viewWith?parameters.viewWith:viewHoder.itemView.getResources().getDisplayMetrics().widthPixels;
-//            if(size>parameters.showCount){
-//                params.width = (int) (parentWith/(parameters.showCount))-parameters.dividerHeight;
-//            }else if(1!=parameters.showCount){
-//                params.width = parentWith/size-parameters.dividerHeight;
-//            }else {
-//                params.width = parentWith;
-//            }
-//            if(0 != parameters.aspectRatio){
-//                params.height = (int) (params.width/parameters.aspectRatio);
-//            }
-//            if(0 != parameters.itemHeight){
-//                params.height = parameters.itemHeight;
-//            }
-//        }
         if(null!=parameters.itemHandle){
             RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) viewHoder.itemView.getLayoutParams();
-              params.width = parameters.width;
-              params.height = parameters.height;
-//            int size = getRealityCount();
-//            parameters.parentWidth = 0<parameters.parentWidth?parameters.parentWidth:viewHoder.itemView.getResources().getDisplayMetrics().widthPixels;
-//            parameters.itemHandle.setItemParams(params,parameters.parentWidth,size);
+            if(null==params){
+                params = new RecyclerView.LayoutParams(RecyclerView.LayoutParams.WRAP_CONTENT,RecyclerView.LayoutParams.WRAP_CONTENT);
+                viewHoder.itemView.setLayoutParams(params);
+            }
+            int size = getRealityCount();
+            parameters.parentWidth = 0<parameters.parentWidth?parameters.parentWidth:viewHoder.itemView.getResources().getDisplayMetrics().widthPixels;
+            parameters.itemHandle.setItemParams(params,viewType,parameters.parentWidth,size);
         }
         return viewHoder;
     }
@@ -105,12 +87,12 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
     public void onBindViewHolder(K holder, int position) {
         if(parameters.section>1){
             int size = null==data||data.isEmpty()?0:data.size();
-            int startIndex = numProxy.getPosition(position)*parameters.section;
+            int startIndex = numProxy.toPosition(position)*parameters.section;
             int endIndex = startIndex+parameters.section-1;
             endIndex = endIndex<size?endIndex:size-1;
             onBindSectionHolder(holder,startIndex,endIndex);
         }else{
-            onBindHolder(holder,numProxy.getPosition(position));
+            onBindHolder(holder,numProxy.toPosition(position));
         }
     }
 
@@ -130,17 +112,9 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
         this.recyclerView = recyclerView;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if(null==layoutManager||!(layoutManager instanceof LinearLayoutManager)) {
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
-            linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext(),parameters.orientation,parameters.reverseLayout);
             recyclerView.setLayoutManager(linearLayoutManager);
-        }
-        if(parameters.isPagerMode){
-            bannerSnapHelper = new BannerSnapHelper(recyclerView,parameters,numProxy);
-            int position = bannerSnapHelper.initPosition();//初始化偏移量
-            if(null!=parameters.scrollListener){
-                parameters.scrollListener.onSelected(numProxy.getPosition(position),numProxy.getRealSize());
-            }
-            bannerSnapHelper.setScrollListener(parameters.scrollListener);
+            layoutManager = linearLayoutManager;
         }
         if(0!=parameters.dividerHeight){
             recyclerView.addItemDecoration(CommItemDecoration.createHorizontal(recyclerView.getContext(), Color.TRANSPARENT,parameters.dividerHeight));
@@ -149,16 +123,17 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
             timingSnapHelper = new TimingSnapHelper(recyclerView,parameters,numProxy);
         }
         if(0<parameters.offset&&!parameters.isLoop){
-            recyclerView.addItemDecoration(new LeftOffset(parameters));
+            recyclerView.addItemDecoration(new FirstOffsetDecoration(parameters));
         }
-        if(0!=parameters.itemPaddingTo||0!=parameters.itemPaddingBottom){
+        if((0!=parameters.itemPaddingTo||0!=parameters.itemPaddingBottom)&&layoutManager.canScrollHorizontally()){
             recyclerView.addItemDecoration(new TopBottomOffset(parameters));
-        }
-        if(null!=parameters.transformer){
-            new TransformerHelper(recyclerView,parameters);
         }
         recyclerView.addOnItemTouchListener(new SlidingConflictHelper(recyclerView.getContext()));
 
+        LinearSnapHelper helper = new LinearSnapHelper(parameters);
+        helper.attachToRecyclerView(recyclerView);
+        initPosition();//初始化偏移量
+        transformerHelper = new TransformerHelper(recyclerView,parameters,numProxy);
     }
 
     public T getItem(int position){
@@ -168,20 +143,53 @@ public abstract class SimpleAdapter<T,K extends RecyclerView.ViewHolder> extends
     public void setNewData(List<T> data){
         this.data.clear();
         this.data.addAll(data == null ? new ArrayList<T>() : data);
+        transformerHelper.unregisterListener();
         notifyDataSetChanged();
-        if(null!=recyclerView&&null!=bannerSnapHelper){
-            int position  = bannerSnapHelper.initPosition();
-            if(null!=parameters.scrollListener){
-                parameters.scrollListener.onSelected(numProxy.getPosition(position),numProxy.getRealSize());
-            }
-            Log.e("position",position+"====");
-        }
-        if(null!=timingSnapHelper){
+        initPosition();
+        transformerHelper.registerListener();
+        if(null != timingSnapHelper){
             timingSnapHelper.start();
         }
     }
 
     public List<T> getData() {
         return data;
+    }
+
+    public int initPosition(){
+        if(null==recyclerView){
+            return RecyclerView.NO_POSITION;
+        }
+        int position = numProxy.getInitPosition();
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        layoutManager.scrollToPositionWithOffset(position,parameters.offset);
+        return position;
+    }
+
+    public void startAuto(){
+        if(null!=timingSnapHelper){
+            timingSnapHelper.start();
+        }
+    }
+
+    public void stopAuto(){
+        if(null!=timingSnapHelper){
+            timingSnapHelper.stop();
+        }
+    }
+
+    public void smoothScrollToPosition(int position){
+        position = numProxy.toRealPosition(position);
+        recyclerView.smoothScrollToPosition(position);
+    }
+
+    public void scrollToPosition(int position){
+        position = numProxy.toRealPosition(position);
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        layoutManager.scrollToPositionWithOffset(position,parameters.offset);
+    }
+
+    public int getSnapPosition(){
+        return numProxy.toPosition(transformerHelper.getSnapPosition());
     }
 }

@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-import com.littleyellow.simple.adapter.SimpleAdapter;
+import com.littleyellow.simple.adapter.LinearAdapter;
 
 /**
  * Created by 小黄 on 2018/11/27.
@@ -52,7 +52,7 @@ public class SimpleRecyclerView extends FrameLayout {
 //            return super.onInterceptTouchEvent(arg0);
 //    }
 
-    public void setAdapter(SimpleAdapter adapter){
+    public void setAdapter(LinearAdapter adapter){
         recyclerView.setAdapter(adapter);
     }
 

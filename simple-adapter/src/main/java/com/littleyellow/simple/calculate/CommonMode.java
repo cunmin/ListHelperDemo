@@ -25,12 +25,22 @@ public class CommonMode implements NumProxy{
     }
 
     @Override
-    public int getPosition(int realPosition) {
+    public int toPosition(int realPosition) {
         return realPosition;
+    }
+
+    @Override
+    public int toRealPosition(int position) {
+        return position;
     }
 
     @Override
     public int getRealSize() {
         return getItemCount();
+    }
+
+    @Override
+    public boolean isLoop() {
+        return false;
     }
 }

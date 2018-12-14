@@ -1,7 +1,8 @@
-package com.littleyellow.listhelperdemo;
+package com.littleyellow.listhelperdemo.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -9,7 +10,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.littleyellow.simple.adapter.SimpleAdapter;
+import com.littleyellow.listhelperdemo.R;
+import com.littleyellow.simple.adapter.LinearAdapter;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ import java.util.List;
  * Created by 小黄 on 2018/8/23.
  */
 
-public class TestAdapter extends SimpleAdapter<String,TestAdapter.ViewHolder> {
+public class TestAdapter extends LinearAdapter<String,TestAdapter.ViewHolder> {
 
     boolean isLoop;
 
@@ -25,9 +27,8 @@ public class TestAdapter extends SimpleAdapter<String,TestAdapter.ViewHolder> {
 
     private View.OnTouchListener touchListener;
 
-    public TestAdapter(List data,View.OnTouchListener touchListener) {
+    public TestAdapter(List data) {
         super(data);
-        this.touchListener = touchListener;
     }
 
     @Override
@@ -39,6 +40,7 @@ public class TestAdapter extends SimpleAdapter<String,TestAdapter.ViewHolder> {
 
     @Override
     public void onBindHolder(final ViewHolder holder, final int position) {
+//        Log.e("currentView", "------" + position);
         holder.textView.setText(position+"");
         holder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,12 +48,6 @@ public class TestAdapter extends SimpleAdapter<String,TestAdapter.ViewHolder> {
 //                holder.itemView.setTranslationX(v.getWidth()/2);
                 holder.textView.setText(position+"-"+holder.itemView.getLeft());
                 Toast.makeText(v.getContext(),position+"",Toast.LENGTH_SHORT).show();
-            }
-        });
-        holder.textView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
             }
         });
     }

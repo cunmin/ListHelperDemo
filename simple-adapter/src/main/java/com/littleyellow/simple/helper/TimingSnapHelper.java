@@ -8,20 +8,19 @@ import android.view.View;
 
 import com.littleyellow.simple.adapter.Parameters;
 import com.littleyellow.simple.calculate.NumProxy;
+import com.littleyellow.simple.util.Utils;
 
 import java.lang.ref.WeakReference;
 
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_FLING;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
-import static com.littleyellow.simple.util.Utils.canCompleScroll;
-import static com.littleyellow.simple.util.Utils.getFirstView;
 
 /**
  * Created by 小黄 on 2018/11/19.
  */
 
-public class TimingSnapHelper extends BaseSnapHelper{
+public class TimingSnapHelper extends LinearSnapHelper {
 
     private RecyclerView recyclerview;
 
@@ -35,11 +34,14 @@ public class TimingSnapHelper extends BaseSnapHelper{
 
     private final NumProxy numProxy;
 
+    private LinearSnapHelper snapHelper;
+
     public TimingSnapHelper(final RecyclerView recyclerview, final Parameters parameters, NumProxy numProxy) {
-        super(recyclerview, parameters);
+        super(parameters);
         this.recyclerview = recyclerview;
         this.parameters = parameters;
         this.numProxy = numProxy;
+        this.snapHelper = new LinearSnapHelper(parameters);
         layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -84,7 +86,6 @@ public class TimingSnapHelper extends BaseSnapHelper{
         handler.removeMessages(0);
     }
 
-    @Override
     protected void scrollToNext() {
 //        if(null==layoutManager){
 //            layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
@@ -100,13 +101,54 @@ public class TimingSnapHelper extends BaseSnapHelper{
 //        if(null==view){
 //            return;
 //        }
-        View firstView = getFirstView(recyclerview,parameters);
-        if(null==firstView){
-            return;
+
+//        View firstView = getFirstView(recyclerview,parameters);
+//        if(null==firstView){
+//            return;
+//        }
+
+        if (layoutManager.canScrollVertically()){
+            boolean canScroll = canVerticalCompleScroll(recyclerview,parameters.offset);
+            if(!canScroll){
+                return;
+            }
+            View snapView = Utils.getOffsetView(layoutManager,getVerticalHelper(layoutManager),parameters);
+            if (null != snapView) {
+                recyclerview.smoothScrollBy(0,snapView.getBottom()+parameters.dividerHeight-parameters.offset,parameters.autoInterpolator);
+            }
+        }else{
+            boolean canScroll = canHorizontalCompleScroll(recyclerview,parameters.offset);
+            if(!canScroll){
+                return;
+            }
+            View snapView = Utils.getOffsetView(layoutManager,getHorizontalHelper(layoutManager),parameters);
+            if (null != snapView) {
+                recyclerview.smoothScrollBy(snapView.getRight()+parameters.dividerHeight-parameters.offset,0,parameters.autoInterpolator);
+            }
         }
-        boolean canScroll = canCompleScroll(recyclerview,parameters);
-        if(canScroll){
-            recyclerview.smoothScrollBy(firstView.getRight()+parameters.dividerHeight-parameters.offset,0);
+
+
+    }
+
+    public boolean canHorizontalCompleScroll(RecyclerView rv, int extOffset){
+        int offset = rv.computeHorizontalScrollOffset();
+        int range = rv.computeHorizontalScrollRange();
+        int extent = rv.computeHorizontalScrollExtent();
+        if(extOffset+offset+extent>=range){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public boolean canVerticalCompleScroll(RecyclerView rv, int extOffset){
+        int offset = rv.computeVerticalScrollOffset();
+        int range = rv.computeVerticalScrollRange();
+        int extent = rv.computeVerticalScrollExtent();
+        if(extOffset+offset+extent>=range){
+            return false;
+        }else{
+            return true;
         }
     }
 }

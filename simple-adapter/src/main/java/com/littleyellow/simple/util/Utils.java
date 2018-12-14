@@ -1,6 +1,7 @@
 package com.littleyellow.simple.util;
 
 import android.content.Context;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -17,19 +18,37 @@ public class Utils {
         return (int) (dpValue * scale + 0.5f);
     }
 
-    public static boolean canCompleScroll(RecyclerView rv, Parameters pt){
-        int offset = rv.computeHorizontalScrollOffset();
-        int range = rv.computeHorizontalScrollRange();
-        int extent = rv.computeHorizontalScrollExtent();
-        if(pt.offset+offset+extent>=range){
-            return false;
-        }else{
-            return true;
-        }
-    }
-
     public static View getFirstView(RecyclerView rv, Parameters pt){
         return rv.findChildViewUnder(pt.offset,pt.itemPaddingTo);
+    }
+
+    public static View getOffsetView(RecyclerView.LayoutManager layoutManager,
+                                     OrientationHelper helper,Parameters pt){
+        int childCount = layoutManager.getChildCount();
+        if (childCount == 0) {
+            return null;
+        }
+
+        View closestChild = null;
+        int absClosest = Integer.MAX_VALUE;
+        int offset;
+        if (layoutManager.getClipToPadding()) {
+            offset = helper.getStartAfterPadding() + pt.offset;
+        } else {
+            offset = pt.offset;
+        }
+        for (int i = 0; i < childCount; i++) {
+            final View child = layoutManager.getChildAt(i);
+            int childStart = helper.getDecoratedStart(child);
+            int absDistance = Math.abs(childStart - offset);
+
+            /** if child center is closer than previous closest, set it as closest  **/
+            if (absDistance < absClosest) {
+                absClosest = absDistance;
+                closestChild = child;
+            }
+        }
+        return closestChild;
     }
 
 }

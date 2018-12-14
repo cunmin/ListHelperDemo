@@ -5,81 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.littleyellow.listhelperdemo.MainActivity">
-    <android.support.v4.widget.NestedScrollView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerview1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
-                <LinearLayout
-                    android:id="@+id/indicator1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center_horizontal|bottom"
-                    android:layout_marginBottom="10dp"/>
-            </FrameLayout>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerview2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
-                <LinearLayout
-                    android:id="@+id/indicator2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center_horizontal|bottom"
-                    android:layout_marginBottom="10dp"/>
-            </FrameLayout>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerview3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
-                <LinearLayout
-                    android:id="@+id/indicator3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center_horizontal|bottom"
-                    android:layout_marginBottom="10dp"/>
-            </FrameLayout>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerview4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
-                <LinearLayout
-                    android:id="@+id/indicator4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center_horizontal|bottom"
-                    android:layout_marginBottom="10dp"/>
-            </FrameLayout>
-        </LinearLayout>
-
-    </android.support.v4.widget.NestedScrollView>
-
-
+        android:layout_height="wrap_content"/>
     <Button
         android:id="@+id/test"
         android:layout_width="wrap_content"

@@ -1,11 +1,19 @@
 package com.littleyellow.simple.adapter;
 
 import android.content.Context;
+import android.support.annotation.IntDef;
+import android.view.animation.Interpolator;
 
 import com.littleyellow.simple.calculate.ItemHandle;
-import com.littleyellow.simple.calculate.ItemTransformer;
 import com.littleyellow.simple.listener.ScrollListener;
+import com.littleyellow.simple.transformer.ItemTransformer;
 import com.littleyellow.simple.util.Utils;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 /**
  * Created by 小黄 on 2018/11/14.
@@ -16,8 +24,6 @@ public class Parameters {
     public boolean isLoop;
 
     public int parentWidth;
-
-    public boolean isPagerMode;
 
     public int dividerHeight;
 
@@ -37,14 +43,19 @@ public class Parameters {
 
     public ItemTransformer transformer;
 
-    public int width;
+    public int maxScrollNum;
 
-    public int height;
+    public float perInch;
+
+    public Interpolator autoInterpolator;
+
+    public int orientation;
+
+    public boolean reverseLayout;
 
     private Parameters(Builder builder) {
         isLoop = builder.isLoop;
         parentWidth = builder.parentWidth;
-        isPagerMode = builder.isPagerMode;
         dividerHeight = builder.dividerHeight;
         autoTime = builder.autoTime;
         scrollListener = builder.scrollListener;
@@ -54,8 +65,11 @@ public class Parameters {
         itemPaddingTo = builder.itemPaddingTop;
         itemPaddingBottom = builder.itemPaddingBottom;
         transformer = builder.transformer;
-        width = builder.width;
-        height = builder.height;
+        maxScrollNum = builder.maxScrollNum;//1>builder.maxScrollNum?1:builder.maxScrollNum;
+        perInch = builder.perInch;
+        autoInterpolator = builder.autoInterpolator;
+        orientation = builder.orientation;
+        reverseLayout = builder.reverseLayout;
     }
 
     public static Builder newBuilder() {
@@ -66,7 +80,6 @@ public class Parameters {
     public static final class Builder {
         private boolean isLoop;
         private int parentWidth;
-        private boolean isPagerMode;
         private int dividerHeight;
         private int autoTime = -1;
         private ScrollListener scrollListener;
@@ -76,8 +89,11 @@ public class Parameters {
         private int itemPaddingTop;
         private int itemPaddingBottom;
         private ItemTransformer transformer;
-        private int width;
-        private int height;
+        private int maxScrollNum;
+        private float perInch = 100f;
+        private Interpolator autoInterpolator;
+        private int orientation;
+        private boolean reverseLayout;
 
         private Builder() {
         }
@@ -96,13 +112,6 @@ public class Parameters {
             this.parentWidth = viewWith;
             return this;
         }
-
-        public Builder isPagerMode(boolean isPagerMode) {
-            this.isPagerMode = isPagerMode;
-            return this;
-        }
-
-
 
         public Builder autoTime(int delayMillis) {
             this.autoTime = delayMillis;
@@ -166,21 +175,40 @@ public class Parameters {
             return this;
         }
 
-        public Builder widthHeight(int width,int height) {
-            this.width = width;
-            this.height = height;
+        public Builder maxScrollNum(int maxScrollNum) {
+            this.maxScrollNum = maxScrollNum;
             return this;
         }
 
-        public Builder widthHeight(Context context,int widthDp,int heightDp) {
-            this.width = Utils.dip2px(context,widthDp);
-            this.height = Utils.dip2px(context,heightDp);
+        public Builder perInch(float perInch) {
+            this.perInch = perInch;
             return this;
         }
+
+        public Builder autoInterpolator(Interpolator autoInterpolator) {
+            this.autoInterpolator = autoInterpolator;
+            return this;
+        }
+
+        public Builder orientation(@orientation int orientation) {
+            this.orientation = orientation;
+            return this;
+        }
+
+        public Builder reverseLayout(boolean reverseLayout) {
+            this.reverseLayout = reverseLayout;
+            return this;
+        }
+
 
 
         public Parameters build() {
             return new Parameters(this);
         }
+    }
+
+    @IntDef({HORIZONTAL, VERTICAL})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface orientation{
     }
 }

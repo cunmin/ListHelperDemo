@@ -29,7 +29,7 @@ public class LoopMode implements NumProxy{
     }
 
     @Override
-    public int getPosition(int realPosition) {
+    public int toPosition(int realPosition) {
         if(null==data||data.isEmpty()){
             return -1;
         }
@@ -37,7 +37,21 @@ public class LoopMode implements NumProxy{
     }
 
     @Override
+    public int toRealPosition(int position) {
+        if(null==data||data.isEmpty()){
+            return -1;
+        }
+        int realPosition = getItemCount()/data.size()/2*data.size()+position;
+        return realPosition;
+    }
+
+    @Override
     public int getRealSize() {
         return null==data?0:data.size();
+    }
+
+    @Override
+    public boolean isLoop() {
+        return true;
     }
 }

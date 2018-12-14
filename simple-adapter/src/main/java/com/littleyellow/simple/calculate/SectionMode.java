@@ -19,6 +19,9 @@ public class SectionMode implements NumProxy {
     public int getInitPosition() {
         if(numProxy instanceof LoopMode){
             int realSize = getRealSize();
+            if(0==realSize) {
+                return 0;
+            }
             int position = getItemCount()/realSize/2*realSize;
             return  position;
         }
@@ -36,16 +39,33 @@ public class SectionMode implements NumProxy {
     }
 
     @Override
-    public int getPosition(int realPosition) {
+    public int toPosition(int realPosition) {
         int realSize = getRealSize();
         int realPos =  (realSize + realPosition % realSize)%realSize;
-//        int realPos = numProxy.getPosition(realPosition);
-        return realPos;//realPos*section+(0==realPos%section?0:1);
+        return realPos;
+    }
+
+    @Override
+    public int toRealPosition(int position) {
+        if(numProxy instanceof LoopMode){
+            int realSize = getRealSize();
+            if(0==realSize) {
+                return 0;
+            }
+            int realosition = getItemCount()/realSize/2*realSize+position;
+            return  realosition;
+        }
+        return position;
     }
 
     @Override
     public int getRealSize() {
         int realSize = numProxy.getRealSize();
         return realSize/section+(0==realSize%section?0:1);
+    }
+
+    @Override
+    public boolean isLoop() {
+        return numProxy.isLoop();
     }
 }

@@ -10,11 +10,11 @@ import com.littleyellow.simple.adapter.Parameters;
  * Created by 小黄 on 2018/11/22.
  */
 
-public class LeftOffset extends RecyclerView.ItemDecoration{
+public class FirstOffsetDecoration extends RecyclerView.ItemDecoration{
 
     private Parameters parameters;
 
-    public LeftOffset(Parameters parameters) {
+    public FirstOffsetDecoration(Parameters parameters) {
         this.parameters = parameters;
     }
 
@@ -23,7 +23,11 @@ public class LeftOffset extends RecyclerView.ItemDecoration{
         super.getItemOffsets(outRect, view, parent, state);
         int postion = parent.getChildAdapterPosition(view);
         if(0 == postion){
-            outRect.left = parameters.offset;
+            if(parent.getLayoutManager().canScrollVertically()){
+                outRect.top = parameters.offset;
+            }else{
+                outRect.left = parameters.offset;
+            }
         }
     }
 }

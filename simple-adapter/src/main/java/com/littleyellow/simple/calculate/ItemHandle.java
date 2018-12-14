@@ -8,6 +8,6 @@ import android.support.v7.widget.RecyclerView;
 
 public interface ItemHandle {
 
-    void setItemParams(RecyclerView.LayoutParams params,int parentWith,int totalSize);
+    void setItemParams(RecyclerView.LayoutParams params,int viewType,int parentWith,int totalSize);
 
 }

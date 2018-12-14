@@ -1,4 +1,4 @@
-package com.littleyellow.listhelperdemo;
+package com.littleyellow.listhelperdemo.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.littleyellow.simple.adapter.SimpleAdapter;
+import com.littleyellow.listhelperdemo.R;
+import com.littleyellow.simple.adapter.LinearAdapter;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * Created by 小黄 on 2018/8/23.
  */
 
-public class SectionAdapter extends SimpleAdapter<String,SectionAdapter.ViewHolder> {
+public class SectionAdapter extends LinearAdapter<Integer,SectionAdapter.ViewHolder> {
 
     public SectionAdapter(List data) {
         super(data);
@@ -42,9 +43,9 @@ public class SectionAdapter extends SimpleAdapter<String,SectionAdapter.ViewHold
             }else{
                 itemView.setVisibility(View.VISIBLE);
             }
-            String text = getItem(i+startPosition);
+            Integer text = getItem(i+startPosition);
             TextView textView = (TextView) itemView.getChildAt(1);
-            textView.setText(text);
+            textView.setText(text+"");
         }
 
         int reStart = startPosition+parameters.section/2;
@@ -56,9 +57,9 @@ public class SectionAdapter extends SimpleAdapter<String,SectionAdapter.ViewHold
             }else{
                 itemView.setVisibility(View.VISIBLE);
             }
-            String text = getItem(i+reStart);
+            Integer text = getItem(i+reStart);
             TextView textView = (TextView) itemView.getChildAt(1);
-            textView.setText(text);
+            textView.setText(text+"");
         }
     }
 
