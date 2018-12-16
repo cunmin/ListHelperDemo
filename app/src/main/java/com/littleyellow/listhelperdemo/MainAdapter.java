@@ -18,7 +18,6 @@ import com.littleyellow.listhelperdemo.adapter.TextFlowAdapter;
 import com.littleyellow.simple.adapter.LinearAdapter;
 import com.littleyellow.simple.adapter.Parameters;
 import com.littleyellow.simple.calculate.ItemHandle;
-import com.littleyellow.simple.helper.DisallowTouchScroll;
 import com.littleyellow.simple.listener.ScrollListener;
 import com.littleyellow.simple.transformer.FadeTransformer;
 import com.littleyellow.simple.transformer.ScaleTransformer;
@@ -113,6 +112,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                 adapter.setParameters(Parameters.newBuilder()
 //                        .isLoop(true)
                         .offset(offset)
+                        .autoTime(1000)
 //                .dividerHeight(dividerHeight)
                         .maxScrollNum(1)
 //                        .transformer(new ZoomOutTransformer())
@@ -159,7 +159,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                         .build());
 
                 break;
-            case 4:
+            case 5:
                 adapter = new TestAdapter(null);
                 dividerHeight = Utils.dip2px(context,12);
                 viewWidth = (int) (parentWidth/3- dividerHeight*2);
@@ -179,7 +179,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                         .build());
 
                 break;
-            case 5:
+            case 4:
                 holder.itemView.getLayoutParams().height = Utils.dip2px(context,200);
                 adapter = new TextFlowAdapter(null);
                 dividerHeight = Utils.dip2px(context,12);
@@ -188,10 +188,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                         .isLoop(true)
                         .maxScrollNum(1)
                         .orientation(LinearLayoutManager.VERTICAL)
-//                        .autoTime(4000)
+                        .autoTime(4000)
                         .offset(context,20)
                         .transformer(new FadeTransformer())
                         .autoInterpolator(new DecelerateInterpolator())
+                        .acceptScroll(Parameters.LONG_PRESS)
                         .itemHandle(new ItemHandle() {
                             @Override
                             public void setItemParams(RecyclerView.LayoutParams params,int viewType, int parentWith, int totalSize) {
@@ -200,8 +201,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                             }
                         })
                         .build());
-                holder.recyclerview.addOnItemTouchListener(new DisallowTouchScroll());
-
                 break;
         }
         holder.recyclerview.setAdapter(adapter);

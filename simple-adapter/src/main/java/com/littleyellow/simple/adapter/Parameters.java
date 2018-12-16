@@ -2,6 +2,7 @@ package com.littleyellow.simple.adapter;
 
 import android.content.Context;
 import android.support.annotation.IntDef;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.animation.Interpolator;
 
 import com.littleyellow.simple.calculate.ItemHandle;
@@ -12,14 +13,17 @@ import com.littleyellow.simple.util.Utils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
-import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
-
 /**
  * Created by 小黄 on 2018/11/14.
  */
 
 public class Parameters {
+
+    public static final int HORIZONTAL = 0;
+
+    public static final int VERTICAL = 1;
+
+    public static final int LONG_PRESS = 2;
 
     public boolean isLoop;
 
@@ -53,6 +57,8 @@ public class Parameters {
 
     public boolean reverseLayout;
 
+    public int acceptScroll;
+
     private Parameters(Builder builder) {
         isLoop = builder.isLoop;
         parentWidth = builder.parentWidth;
@@ -70,6 +76,7 @@ public class Parameters {
         autoInterpolator = builder.autoInterpolator;
         orientation = builder.orientation;
         reverseLayout = builder.reverseLayout;
+        acceptScroll = builder.acceptScroll;
     }
 
     public static Builder newBuilder() {
@@ -94,6 +101,7 @@ public class Parameters {
         private Interpolator autoInterpolator;
         private int orientation;
         private boolean reverseLayout;
+        private int acceptScroll = HORIZONTAL;
 
         private Builder() {
         }
@@ -200,6 +208,11 @@ public class Parameters {
             return this;
         }
 
+        public Builder acceptScroll(@acceptScroll int acceptScroll) {
+            this.acceptScroll = acceptScroll;
+            return this;
+        }
+
 
 
         public Parameters build() {
@@ -207,8 +220,15 @@ public class Parameters {
         }
     }
 
-    @IntDef({HORIZONTAL, VERTICAL})
+    @IntDef({LinearLayoutManager.HORIZONTAL, LinearLayoutManager.VERTICAL})
     @Retention(RetentionPolicy.SOURCE)
     public @interface orientation{
     }
+
+    @IntDef({HORIZONTAL, VERTICAL,LONG_PRESS})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface acceptScroll{
+    }
+
+
 }

@@ -12,10 +12,12 @@ import com.littleyellow.simple.calculate.LoopMode;
 import com.littleyellow.simple.calculate.NumProxy;
 import com.littleyellow.simple.calculate.SectionMode;
 import com.littleyellow.simple.calculate.TopBottomOffset;
-import com.littleyellow.simple.transformer.TransformerHelper;
+import com.littleyellow.simple.helper.HorizontalConflictHelper;
 import com.littleyellow.simple.helper.LinearSnapHelper;
-import com.littleyellow.simple.helper.SlidingConflictHelper;
+import com.littleyellow.simple.helper.LongPressScrollHelper;
 import com.littleyellow.simple.helper.TimingSnapHelper;
+import com.littleyellow.simple.helper.VerticalConflictHelper;
+import com.littleyellow.simple.transformer.TransformerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +114,12 @@ public abstract class LinearAdapter<T,K extends RecyclerView.ViewHolder> extends
         this.recyclerView = recyclerView;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if(null==layoutManager||!(layoutManager instanceof LinearLayoutManager)) {
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext(),parameters.orientation,parameters.reverseLayout);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext(),parameters.orientation,parameters.reverseLayout){
+                @Override
+                public boolean canScrollVertically() {
+                    return super.canScrollVertically();
+                }
+            };
             recyclerView.setLayoutManager(linearLayoutManager);
             layoutManager = linearLayoutManager;
         }
@@ -128,7 +135,14 @@ public abstract class LinearAdapter<T,K extends RecyclerView.ViewHolder> extends
         if((0!=parameters.itemPaddingTo||0!=parameters.itemPaddingBottom)&&layoutManager.canScrollHorizontally()){
             recyclerView.addItemDecoration(new TopBottomOffset(parameters));
         }
-        recyclerView.addOnItemTouchListener(new SlidingConflictHelper(recyclerView.getContext()));
+        if(Parameters.HORIZONTAL==parameters.acceptScroll){
+            recyclerView.addOnItemTouchListener(new HorizontalConflictHelper(recyclerView.getContext(),parameters));
+        }else if(Parameters.VERTICAL==parameters.acceptScroll){
+            recyclerView.addOnItemTouchListener(new VerticalConflictHelper(recyclerView.getContext(),parameters));
+        }else if(Parameters.LONG_PRESS==parameters.acceptScroll){
+            recyclerView.addOnItemTouchListener(new LongPressScrollHelper(recyclerView));
+        }
+//        recyclerView.addOnItemTouchListener(new SlidingConflictHelper(recyclerView.getContext()));
 
         LinearSnapHelper helper = new LinearSnapHelper(parameters);
         helper.attachToRecyclerView(recyclerView);
