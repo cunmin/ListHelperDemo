@@ -2,7 +2,6 @@ package com.littleyellow.simple.transformer;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.littleyellow.simple.adapter.Parameters;
@@ -63,7 +62,6 @@ public class TransformerHelper {
         int lastPositon = layoutManager.findLastVisibleItemPosition();//recyclerView.getChildAdapterPosition(lastView);
         View snapView =helper.findSnapView(layoutManager);
         int snapPosition = recyclerView.getChildAdapterPosition(snapView);
-        Log.e("currentView", "snapPosition======" + snapPosition);
         if(null!=snapView&&RecyclerView.NO_POSITION!=snapPosition){
             int totalX = snapView.getWidth();
             float reference = ((snapView.getLeft()-parameters.offset)*1.0f)/totalX;
@@ -94,7 +92,6 @@ public class TransformerHelper {
                 View view = layoutManager.findViewByPosition(i);
                 if(null != view&&null!=transformer){
                     float progress = (i-snapPosition)+reference;
-                    Log.e("currentView", i + "======" + progress);
                     transformer.transformItem(view,progress);
                 }
             }
@@ -104,7 +101,9 @@ public class TransformerHelper {
         }
     }
 
-
+    public View getSnapView(){
+        return helper.findSnapView(layoutManager);
+    }
 
     public int getSnapPosition(){
         View snapView =helper.findSnapView(layoutManager);

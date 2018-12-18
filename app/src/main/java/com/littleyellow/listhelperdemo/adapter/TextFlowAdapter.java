@@ -25,6 +25,7 @@ public class TextFlowAdapter extends LinearAdapter<Integer,TextFlowAdapter.ViewH
 
     @Override
     public ViewHolder onCreateHolder(ViewGroup parent, int viewType) {
+        Log.e("TextFlowAdapter","onCreateHolder============");
         TextView textView = new TextView(parent.getContext());
         int padding = Utils.dip2px(parent.getContext(),10);
         textView.setPadding(padding,padding,padding,padding);
@@ -34,7 +35,7 @@ public class TextFlowAdapter extends LinearAdapter<Integer,TextFlowAdapter.ViewH
     @Override
     public void onBindHolder(ViewHolder holder, final int position) {
         holder.textView.setText(getItem(position)+"============");
-//        Log.e("TextFlowAdapter",position+"============");
+        Log.e("TextFlowAdapter",position+"============");
         holder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

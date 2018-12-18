@@ -36,7 +36,7 @@ public class VerticalConflictHelper implements RecyclerView.OnItemTouchListener{
             case MotionEvent.ACTION_MOVE:
                 int y = (int) e.getY();
                 int x = (int) e.getX();
-                if(Math.abs(x-moveX)>mTouchSlop&&Math.abs(x-moveY)<mTouchSlop*2){
+                if(Math.abs(x-moveX)>mTouchSlop&&Math.abs(y-moveY)<mTouchSlop*2){
                     rv.getParent().requestDisallowInterceptTouchEvent(false);
                 }else {
                     rv.getParent().requestDisallowInterceptTouchEvent(true);

@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.animation.Interpolator;
 
 import com.littleyellow.simple.calculate.ItemHandle;
+import com.littleyellow.simple.listener.ItemClickListener;
+import com.littleyellow.simple.listener.ItemLongClickListener;
 import com.littleyellow.simple.listener.ScrollListener;
 import com.littleyellow.simple.transformer.ItemTransformer;
 import com.littleyellow.simple.util.Utils;
@@ -23,7 +25,7 @@ public class Parameters {
 
     public static final int VERTICAL = 1;
 
-    public static final int LONG_PRESS = 2;
+    public static final int NOTSCROLL = 2;
 
     public boolean isLoop;
 
@@ -59,6 +61,10 @@ public class Parameters {
 
     public int acceptScroll;
 
+    public ItemClickListener clickListener;
+
+    public ItemLongClickListener longClickListener;
+
     private Parameters(Builder builder) {
         isLoop = builder.isLoop;
         parentWidth = builder.parentWidth;
@@ -77,6 +83,8 @@ public class Parameters {
         orientation = builder.orientation;
         reverseLayout = builder.reverseLayout;
         acceptScroll = builder.acceptScroll;
+        clickListener = builder.clickListener;
+        longClickListener = builder.longClickListener;
     }
 
     public static Builder newBuilder() {
@@ -102,6 +110,8 @@ public class Parameters {
         private int orientation;
         private boolean reverseLayout;
         private int acceptScroll = HORIZONTAL;
+        private ItemClickListener clickListener;
+        private ItemLongClickListener longClickListener;
 
         private Builder() {
         }
@@ -213,7 +223,15 @@ public class Parameters {
             return this;
         }
 
+        public Builder clickListener(ItemClickListener clickListener) {
+            this.clickListener = clickListener;
+            return this;
+        }
 
+        public Builder longClickListener(ItemLongClickListener longClickListener) {
+            this.longClickListener = longClickListener;
+            return this;
+        }
 
         public Parameters build() {
             return new Parameters(this);
@@ -225,7 +243,7 @@ public class Parameters {
     public @interface orientation{
     }
 
-    @IntDef({HORIZONTAL, VERTICAL,LONG_PRESS})
+    @IntDef({HORIZONTAL,VERTICAL,NOTSCROLL})
     @Retention(RetentionPolicy.SOURCE)
     public @interface acceptScroll{
     }

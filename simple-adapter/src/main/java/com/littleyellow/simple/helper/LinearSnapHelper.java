@@ -51,12 +51,10 @@ public class LinearSnapHelper extends SnapHelper {
     @Nullable
     @Override
     public View findSnapView(RecyclerView.LayoutManager layoutManager) {
-        if (layoutManager.canScrollVertically()) {
-            return findOffsetView(layoutManager, getVerticalHelper(layoutManager));
-        } else if (layoutManager.canScrollHorizontally()) {
-            return findOffsetView(layoutManager, getHorizontalHelper(layoutManager));
+        if(parameters.maxScrollNum<1){
+            return null;
         }
-        return null;
+        return findOffsetView(layoutManager);
     }
 
     @Override
@@ -151,7 +149,6 @@ public class LinearSnapHelper extends SnapHelper {
         if (deltaJump < -deltaThreshold) {
             deltaJump = -deltaThreshold;
         }
-        Log.e("onScrollStateChanged",deltaThreshold+"------"+layoutManager.getWidth()+"/"+getHorizontalHelper(layoutManager).getDecoratedMeasurement(currentView));
 //        if (deltaJump == 0) {
 //            return RecyclerView.NO_POSITION;
 //        }
@@ -206,12 +203,13 @@ public class LinearSnapHelper extends SnapHelper {
 //                : (forwardDirection ? centerPosition + 1 : centerPosition);
     }
 
-    private View findOffsetView(RecyclerView.LayoutManager layoutManager,
-                                OrientationHelper helper) {
-        if(parameters.maxScrollNum<1){
-            return null;
+    public View findOffsetView(RecyclerView.LayoutManager layoutManager) {
+        OrientationHelper helper;
+        if (layoutManager.canScrollVertically()) {
+            helper = getVerticalHelper(layoutManager);
+        } else {
+            helper = getHorizontalHelper(layoutManager);
         }
-
         int childCount = layoutManager.getChildCount();
         if (childCount == 0) {
             return null;
@@ -244,10 +242,18 @@ public class LinearSnapHelper extends SnapHelper {
         return offset;
     }
 
+
+    public View getSnapView(){
+        return findOffsetView(layoutManager);
+    }
+
+    public int getSnapPosition(){
+        View snapView =getSnapView();
+        return layoutManager.getPosition(snapView);
+    }
     /**
      * ===================================================================
      */
-    @Nullable
     private OrientationHelper mHorizontalHelper;
     private OrientationHelper mVerticalHelper;
     private RecyclerView.LayoutManager layoutManager;

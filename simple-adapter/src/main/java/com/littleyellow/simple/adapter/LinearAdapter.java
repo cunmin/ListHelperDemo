@@ -3,6 +3,7 @@ package com.littleyellow.simple.adapter;
 import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.littleyellow.simple.calculate.CommItemDecoration;
@@ -14,9 +15,10 @@ import com.littleyellow.simple.calculate.SectionMode;
 import com.littleyellow.simple.calculate.TopBottomOffset;
 import com.littleyellow.simple.helper.HorizontalConflictHelper;
 import com.littleyellow.simple.helper.LinearSnapHelper;
-import com.littleyellow.simple.helper.LongPressScrollHelper;
+import com.littleyellow.simple.helper.NotScrollHelper;
 import com.littleyellow.simple.helper.TimingSnapHelper;
 import com.littleyellow.simple.helper.VerticalConflictHelper;
+import com.littleyellow.simple.listener.TouchHelper;
 import com.littleyellow.simple.transformer.TransformerHelper;
 
 import java.util.ArrayList;
@@ -30,17 +32,20 @@ public abstract class LinearAdapter<T,K extends RecyclerView.ViewHolder> extends
 
     private RecyclerView recyclerView;
 
-    protected NumProxy numProxy;
+    private NumProxy numProxy;
 
-    protected Parameters parameters = Parameters.newBuilder().build();
+    protected Parameters parameters;
 
     List<T> data;
 
     private TimingSnapHelper timingSnapHelper;
     private TransformerHelper transformerHelper;
+    private RecyclerView.LayoutManager layoutManager;
+
+    private LinearSnapHelper snapHelper;
 
     public LinearAdapter(List<T> data){
-        this(data,null);
+        this(data,Parameters.newBuilder().build());
     }
 
     public LinearAdapter(List<T> data, Parameters parameters) {
@@ -50,13 +55,14 @@ public abstract class LinearAdapter<T,K extends RecyclerView.ViewHolder> extends
 
     public void setParameters(Parameters parameters){
         if(null==parameters){
-            return;
+            parameters = Parameters.newBuilder().build();
         }
         this.parameters = parameters;
         numProxy = parameters.isLoop?new LoopMode(data):new CommonMode(data);
         if(1<parameters.section){
             numProxy = new SectionMode(numProxy,parameters.section);
         }
+        snapHelper = new LinearSnapHelper(parameters);
     }
 
     public Parameters getParameters() {
@@ -112,22 +118,18 @@ public abstract class LinearAdapter<T,K extends RecyclerView.ViewHolder> extends
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        layoutManager = recyclerView.getLayoutManager();
         if(null==layoutManager||!(layoutManager instanceof LinearLayoutManager)) {
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext(),parameters.orientation,parameters.reverseLayout){
-                @Override
-                public boolean canScrollVertically() {
-                    return super.canScrollVertically();
-                }
-            };
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext(),parameters.orientation,parameters.reverseLayout);
             recyclerView.setLayoutManager(linearLayoutManager);
             layoutManager = linearLayoutManager;
+
         }
         if(0!=parameters.dividerHeight){
             recyclerView.addItemDecoration(CommItemDecoration.createHorizontal(recyclerView.getContext(), Color.TRANSPARENT,parameters.dividerHeight));
         }
         if(0<parameters.autoTime){
-            timingSnapHelper = new TimingSnapHelper(recyclerView,parameters,numProxy);
+            timingSnapHelper = new TimingSnapHelper(recyclerView,snapHelper,parameters);
         }
         if(0<parameters.offset&&!parameters.isLoop){
             recyclerView.addItemDecoration(new FirstOffsetDecoration(parameters));
@@ -135,17 +137,21 @@ public abstract class LinearAdapter<T,K extends RecyclerView.ViewHolder> extends
         if((0!=parameters.itemPaddingTo||0!=parameters.itemPaddingBottom)&&layoutManager.canScrollHorizontally()){
             recyclerView.addItemDecoration(new TopBottomOffset(parameters));
         }
+        if(null!=parameters.clickListener||null!=parameters.clickListener){
+            recyclerView.addOnItemTouchListener(new TouchHelper(recyclerView));
+        }
+
         if(Parameters.HORIZONTAL==parameters.acceptScroll){
             recyclerView.addOnItemTouchListener(new HorizontalConflictHelper(recyclerView.getContext(),parameters));
         }else if(Parameters.VERTICAL==parameters.acceptScroll){
             recyclerView.addOnItemTouchListener(new VerticalConflictHelper(recyclerView.getContext(),parameters));
-        }else if(Parameters.LONG_PRESS==parameters.acceptScroll){
-            recyclerView.addOnItemTouchListener(new LongPressScrollHelper(recyclerView));
+        }else if(Parameters.NOTSCROLL==parameters.acceptScroll){
+            recyclerView.addOnItemTouchListener(new NotScrollHelper(recyclerView));
         }
-//        recyclerView.addOnItemTouchListener(new SlidingConflictHelper(recyclerView.getContext()));
 
-        LinearSnapHelper helper = new LinearSnapHelper(parameters);
-        helper.attachToRecyclerView(recyclerView);
+//        recyclerView.addOnItemTouchListener(new SlidingConflictHelper(recyclerView.getContext()));
+        snapHelper.attachToRecyclerView(recyclerView);
+
         initPosition();//初始化偏移量
         transformerHelper = new TransformerHelper(recyclerView,parameters,numProxy);
     }
@@ -193,28 +199,64 @@ public abstract class LinearAdapter<T,K extends RecyclerView.ViewHolder> extends
     }
 
     public void smoothScrollToPosition(int position){
-        if(numProxy.isLoop()){
-            int position2 = getPosition();
-            int diff = position-position2;
-            recyclerView.smoothScrollToPosition(getRealPosition()+diff);
-        }else{
-            if(0<=position&&position<numProxy.getItemCount()){
-                recyclerView.smoothScrollToPosition(position);
+        View snapView = snapHelper.findOffsetView(layoutManager);//Utils.getOffsetView(layoutManager,getHorizontalHelper(layoutManager),parameters);
+        if(null!=snapView) {
+            int position2 = numProxy.toPosition(recyclerView.getChildAdapterPosition(snapView));
+            int diff = position - position2;
+            if (layoutManager.canScrollVertically()) {
+                int snapDistance = snapView.getBottom() + parameters.dividerHeight - parameters.offset;
+                int distance = snapDistance + (diff - 1) * (snapView.getHeight() + parameters.dividerHeight);
+                recyclerView.smoothScrollBy(0,distance,parameters.autoInterpolator);
+            } else {
+                int snapDistance = snapView.getRight() + parameters.dividerHeight - parameters.offset;
+                int distance = snapDistance + (diff - 1) * (snapView.getWidth() + parameters.dividerHeight);
+                recyclerView.smoothScrollBy(distance, 0, parameters.autoInterpolator);
             }
         }
+//        if(numProxy.isLoop()){
+//            int position2 = getPosition();
+//            int diff = position-position2;
+//            recyclerView.smoothScrollToPosition(getRealPosition()+diff);
+//        }else{
+//            if(0<=position&&position<numProxy.getItemCount()){
+//                recyclerView.smoothScrollToPosition(position);
+//            }
+//        }
     }
 
     public void scrollToPosition(int position){
-        position = numProxy.toRealPosition(position);
-        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-        layoutManager.scrollToPositionWithOffset(position,parameters.offset);
+        View snapView = snapHelper.findOffsetView(layoutManager);//Utils.getOffsetView(layoutManager,getHorizontalHelper(layoutManager),parameters);
+        if(null!=snapView) {
+            int position2 = numProxy.toPosition(recyclerView.getChildAdapterPosition(snapView));
+            int diff = position - position2;
+            if (layoutManager.canScrollVertically()) {
+                int snapDistance = snapView.getBottom() + parameters.dividerHeight - parameters.offset;
+                int distance = snapDistance + (diff - 1) * (snapView.getHeight() + parameters.dividerHeight);
+                recyclerView.scrollBy(0,distance);
+            } else {
+                int snapDistance = snapView.getRight() + parameters.dividerHeight - parameters.offset;
+                int distance = snapDistance + (diff - 1) * (snapView.getWidth() + parameters.dividerHeight);
+                recyclerView.scrollBy(distance, 0);
+            }
+        }
+//        position = numProxy.toRealPosition(position);
+//        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+//        layoutManager.scrollToPositionWithOffset(position,parameters.offset);
+    }
+
+    public View getSnapView(){
+        return snapHelper.getSnapView();
     }
 
     public int getPosition(){
-        return numProxy.toPosition(transformerHelper.getSnapPosition());
+        return numProxy.toPosition(snapHelper.getSnapPosition());
     }
 
     public int getRealPosition(){
-        return transformerHelper.getSnapPosition();
+        return snapHelper.getSnapPosition();
+    }
+
+    public NumProxy getNumProxy() {
+        return numProxy;
     }
 }

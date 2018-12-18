@@ -7,8 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.littleyellow.simple.adapter.Parameters;
-import com.littleyellow.simple.calculate.NumProxy;
-import com.littleyellow.simple.util.Utils;
 
 import java.lang.ref.WeakReference;
 
@@ -20,7 +18,7 @@ import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCR
  * Created by 小黄 on 2018/11/19.
  */
 
-public class TimingSnapHelper extends LinearSnapHelper {
+public class TimingSnapHelper{
 
     private RecyclerView recyclerview;
 
@@ -32,16 +30,12 @@ public class TimingSnapHelper extends LinearSnapHelper {
 
     private DelayHandler handler;
 
-    private final NumProxy numProxy;
-
     private LinearSnapHelper snapHelper;
 
-    public TimingSnapHelper(final RecyclerView recyclerview, final Parameters parameters, NumProxy numProxy) {
-        super(parameters);
+    public TimingSnapHelper(final RecyclerView recyclerview,LinearSnapHelper snapHelper, final Parameters parameters) {
         this.recyclerview = recyclerview;
+        this.snapHelper = snapHelper;
         this.parameters = parameters;
-        this.numProxy = numProxy;
-        this.snapHelper = new LinearSnapHelper(parameters);
         layoutManager = (LinearLayoutManager) recyclerview.getLayoutManager();
         recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -112,7 +106,7 @@ public class TimingSnapHelper extends LinearSnapHelper {
             if(!canScroll){
                 return;
             }
-            View snapView = Utils.getOffsetView(layoutManager,getVerticalHelper(layoutManager),parameters);
+            View snapView = snapHelper.findOffsetView(layoutManager);//Utils.getOffsetView(layoutManager,getVerticalHelper(layoutManager),parameters);
             if (null != snapView) {
                 recyclerview.smoothScrollBy(0,snapView.getBottom()+parameters.dividerHeight-parameters.offset,parameters.autoInterpolator);
             }
@@ -121,13 +115,11 @@ public class TimingSnapHelper extends LinearSnapHelper {
             if(!canScroll){
                 return;
             }
-            View snapView = Utils.getOffsetView(layoutManager,getHorizontalHelper(layoutManager),parameters);
+            View snapView = snapHelper.findOffsetView(layoutManager);//Utils.getOffsetView(layoutManager,getHorizontalHelper(layoutManager),parameters);
             if (null != snapView) {
                 recyclerview.smoothScrollBy(snapView.getRight()+parameters.dividerHeight-parameters.offset,0,parameters.autoInterpolator);
             }
         }
-
-
     }
 
     public boolean canHorizontalCompleScroll(RecyclerView rv, int extOffset){

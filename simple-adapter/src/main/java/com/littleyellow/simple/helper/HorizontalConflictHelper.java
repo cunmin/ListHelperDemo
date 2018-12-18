@@ -27,6 +27,10 @@ public class HorizontalConflictHelper implements RecyclerView.OnItemTouchListene
 
     @Override
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+//        if (e.getPointerCount()>1){
+//            rv.getParent().requestDisallowInterceptTouchEvent(false);
+//            return false;
+//        }
         switch (e.getAction()){
             case MotionEvent.ACTION_DOWN:
                 moveX = (int) e.getX();

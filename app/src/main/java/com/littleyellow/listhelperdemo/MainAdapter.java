@@ -5,19 +5,24 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.littleyellow.MainBean;
 import com.littleyellow.listhelperdemo.adapter.SectionAdapter;
 import com.littleyellow.listhelperdemo.adapter.TestAdapter;
 import com.littleyellow.listhelperdemo.adapter.TextFlowAdapter;
+import com.littleyellow.simple.FlowRecyclerView;
 import com.littleyellow.simple.adapter.LinearAdapter;
 import com.littleyellow.simple.adapter.Parameters;
 import com.littleyellow.simple.calculate.ItemHandle;
+import com.littleyellow.simple.listener.ItemClickListener;
+import com.littleyellow.simple.listener.ItemLongClickListener;
 import com.littleyellow.simple.listener.ScrollListener;
 import com.littleyellow.simple.transformer.FadeTransformer;
 import com.littleyellow.simple.transformer.ScaleTransformer;
@@ -42,7 +47,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
     @Override
     public MainAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View v = inflater.inflate(R.layout.banner_layout, parent,false);
+        View v;
+//        if(4 == viewType){
+//            v = new FlowRecyclerView(parent.getContext());
+//            v.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+//        }else{
+//            v = inflater.inflate(R.layout.banner_layout, parent,false);
+//        }
+        v = inflater.inflate(R.layout.banner_layout, parent,false);
         final ViewHolder holder = new ViewHolder(v);
         LinearAdapter adapter = null;
         final Context context = parent.getContext();
@@ -106,13 +118,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                 break;
             case 2:
                 adapter = new TestAdapter(null);
-                this.adapter = adapter;
+//                this.adapter = adapter;
                 viewWidth = (int) (parentWidth/1.5- Utils.dip2px(context,12));
                 offset = (parentWidth-viewWidth)/2;
                 adapter.setParameters(Parameters.newBuilder()
 //                        .isLoop(true)
                         .offset(offset)
-                        .autoTime(1000)
+//                        .autoTime(1000)
 //                .dividerHeight(dividerHeight)
                         .maxScrollNum(1)
 //                        .transformer(new ZoomOutTransformer())
@@ -141,14 +153,16 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                 break;
             case 3:
                 adapter = new TestAdapter(null);
+
                 dividerHeight = Utils.dip2px(context,12);
                 viewWidth = (int) (parentWidth/3- dividerHeight*2);
                 offset = dividerHeight;
                 adapter.setParameters(Parameters.newBuilder()
+                        .isLoop(true)
                         .offset(offset)
                         .dividerHeight(dividerHeight)
                         .maxScrollNum(2)
-
+//                        .autoTime(2000)
                         .itemHandle(new ItemHandle() {
                             @Override
                             public void setItemParams(RecyclerView.LayoutParams params,int viewType, int parentWith, int totalSize) {
@@ -161,6 +175,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                 break;
             case 5:
                 adapter = new TestAdapter(null);
+
                 dividerHeight = Utils.dip2px(context,12);
                 viewWidth = (int) (parentWidth/3- dividerHeight*2);
                 offset = dividerHeight;
@@ -182,17 +197,31 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
             case 4:
                 holder.itemView.getLayoutParams().height = Utils.dip2px(context,200);
                 adapter = new TextFlowAdapter(null);
+                this.adapter = adapter;
                 dividerHeight = Utils.dip2px(context,12);
                 viewWidth = parentWidth;
                 adapter.setParameters(Parameters.newBuilder()
                         .isLoop(true)
                         .maxScrollNum(1)
                         .orientation(LinearLayoutManager.VERTICAL)
+                        .acceptScroll(Parameters.NOTSCROLL)
                         .autoTime(4000)
                         .offset(context,20)
                         .transformer(new FadeTransformer())
                         .autoInterpolator(new DecelerateInterpolator())
-                        .acceptScroll(Parameters.LONG_PRESS)
+//                        .acceptScroll(Parameters.VERTICAL)
+                        .clickListener(new ItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position,MotionEvent e) {
+                                Toast.makeText(view.getContext(),"onItemClick"+position,Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .longClickListener(new ItemLongClickListener() {
+                            @Override
+                            public void onItemLongClick(View view, int position,MotionEvent e) {
+                                Toast.makeText(view.getContext(),"onItemLongClick"+position,Toast.LENGTH_SHORT).show();
+                            }
+                        })
                         .itemHandle(new ItemHandle() {
                             @Override
                             public void setItemParams(RecyclerView.LayoutParams params,int viewType, int parentWith, int totalSize) {
@@ -203,7 +232,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                         .build());
                 break;
         }
-        holder.recyclerview.setAdapter(adapter);
+        if(null!=holder.recyclerview){
+            holder.recyclerview.setAdapter(adapter);
+        }
+        if(null!=holder.flowRecyclerView){
+            holder.flowRecyclerView.setAdapter(adapter);
+        }
         return holder;
     }
 
@@ -214,16 +248,25 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        LinearAdapter adapter = null;
+        if(null!=holder.recyclerview){
+            adapter = (LinearAdapter) holder.recyclerview.getAdapter();
+        }
+        if(null!=holder.flowRecyclerView){
+            adapter =  holder.flowRecyclerView.getAdapter();
+        }
+
+        adapter.setNewData(data.get(position).getData());
         switch (position){
             case 0:
                 break;
 
-            case 1:
+            case 2:
+                adapter.scrollToPosition(2);
                 break;
         }
 
-        LinearAdapter adapter = (LinearAdapter) holder.recyclerview.getAdapter();
-        adapter.setNewData(data.get(position).getData());
+
     }
 
     @Override
@@ -237,10 +280,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
 
         private LinearLayout indicator;
 
+        private FlowRecyclerView flowRecyclerView;
+
         public ViewHolder(View itemView) {
             super(itemView);
             recyclerview = (RecyclerView) itemView.findViewById(R.id.recyclerview);
             indicator = (LinearLayout) itemView.findViewById(R.id.indicator);
+            if(itemView instanceof FlowRecyclerView){
+                flowRecyclerView  = (FlowRecyclerView) itemView;
+            }
         }
     }
 
