@@ -1,5 +1,6 @@
 package com.littleyellow.listhelperdemo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -85,5 +86,14 @@ public class MainActivity extends AppCompatActivity {
 //                .addTab("评论",MainFragment.class,new Bundle())
                 .build()
                 .setupViewPager();
+        findViewById(R.id.testB).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction("hehe1");
+                intent.addCategory("haha1");
+                startActivity(intent);
+            }
+        });
     }
 }

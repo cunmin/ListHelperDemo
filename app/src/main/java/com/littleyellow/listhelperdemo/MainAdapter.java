@@ -38,8 +38,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
 
     private final List<MainBean> data;
 
-    public static LinearAdapter adapter;
-
     public MainAdapter(List<MainBean> data) {
         this.data = data;
     }
@@ -122,7 +120,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                 viewWidth = (int) (parentWidth/1.5- Utils.dip2px(context,12));
                 offset = (parentWidth-viewWidth)/2;
                 adapter.setParameters(Parameters.newBuilder()
-//                        .isLoop(true)
+                        .isLoop(true)
                         .offset(offset)
 //                        .autoTime(1000)
 //                .dividerHeight(dividerHeight)
@@ -197,7 +195,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
             case 4:
                 holder.itemView.getLayoutParams().height = Utils.dip2px(context,200);
                 adapter = new TextFlowAdapter(null);
-                this.adapter = adapter;
                 dividerHeight = Utils.dip2px(context,12);
                 viewWidth = parentWidth;
                 adapter.setParameters(Parameters.newBuilder()
@@ -303,9 +300,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                 params.leftMargin = 20;
                 params.rightMargin = 20;
                 if (i == position) {
-                    imageView.setImageResource(R.mipmap.bg_indicator_yet);
+                    imageView.setImageResource(R.mipmap.icon_indicator_yet);
                 } else {
-                    imageView.setImageResource(R.mipmap.bg_indicator_not);
+                    imageView.setImageResource(R.mipmap.icon_indicator_not);
                 }
                 indicator.addView(imageView, params);
             }

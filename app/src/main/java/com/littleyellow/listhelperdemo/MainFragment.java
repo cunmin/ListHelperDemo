@@ -17,7 +17,6 @@ import com.littleyellow.simple.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.littleyellow.listhelperdemo.MainAdapter.adapter;
 
 public class MainFragment extends LazyFragment {
 
@@ -34,7 +33,7 @@ public class MainFragment extends LazyFragment {
         List<MainBean> data = new ArrayList<>();
         for(int i=5;i>=0;i--){
             MainBean bean = new MainBean(i,10);
-//            data.add(bean);
+            data.add(bean);
         }
 //        MainBean bean = new MainBean(4,10);
 //            data.add(bean);
@@ -49,8 +48,8 @@ public class MainFragment extends LazyFragment {
             boolean start;
             @Override
             public void onClick(View v) {
-                adapter.smoothScrollToPosition(2);
-                start = !start;
+//                adapter.smoothScrollToPosition(2);
+//                start = !start;
 
             }
         });

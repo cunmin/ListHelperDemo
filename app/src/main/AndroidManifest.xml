@@ -16,7 +16,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TestActivity"/>
+        <activity android:name=".TestActivity">
+            <intent-filter>
+                <action android:name="hehe1"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="haha1"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".TestBActivity">
+            <intent-filter>
+                <action android:name="hehe1"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="haha1"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
