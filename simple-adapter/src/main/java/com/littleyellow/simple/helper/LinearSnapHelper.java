@@ -3,12 +3,12 @@ package com.littleyellow.simple.helper;
 import android.graphics.PointF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 
 import com.littleyellow.simple.adapter.Parameters;
@@ -73,7 +73,31 @@ public class LinearSnapHelper extends SnapHelper {
             return RecyclerView.NO_POSITION;
         }
 
-        final View currentView = findSnapView(layoutManager);
+        View currentView;//
+        if (layoutManager.canScrollHorizontally()){
+            if(0<velocityX){
+                currentView = mRecyclerView.findChildViewUnder(parameters.offset,0);
+            }else{
+                LinearLayoutManager linearManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                int testPosition = linearManager.findFirstVisibleItemPosition();
+                View testView = linearManager.findViewByPosition(testPosition);
+                int width = null==testView?0:testView.getWidth();
+                currentView = mRecyclerView.findChildViewUnder(parameters.offset+width,0);
+            }
+        }else{
+            if(0<velocityY){
+                currentView = mRecyclerView.findChildViewUnder(0,parameters.offset);
+            }else{
+                LinearLayoutManager linearManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                int testPosition = linearManager.findFirstVisibleItemPosition();
+                View testView = linearManager.findViewByPosition(testPosition);
+                int height = null==testView?0:testView.getHeight();
+                currentView = mRecyclerView.findChildViewUnder(0,parameters.offset+height);
+            }
+        }
+        if(currentView == null){
+            currentView = findSnapView(layoutManager);
+        }
         if (currentView == null) {
             return RecyclerView.NO_POSITION;
         }
@@ -100,13 +124,16 @@ public class LinearSnapHelper extends SnapHelper {
             if (vectorForEnd.x < 0) {
                 hDeltaJump = -hDeltaJump;
             }
-            if((0==hDeltaJump||1==parameters.maxScrollNum)&&0!=velocityX){
-                if(currentView.getLeft()>parameters.offset){
-                    hDeltaJump += 0<velocityX?0:-1;
-                }else{
-                    hDeltaJump += velocityX>0?1:-1;
-                }
-            }
+//            if(parameters.offset>lastX){
+//                hDeltaJump = 0;
+//            }
+//            if((0==hDeltaJump)&&0!=velocityX){
+//                if(currentView.getLeft()>parameters.offset){
+//                    hDeltaJump += 0<velocityX?0:-1;
+//                }else{
+//                    hDeltaJump += velocityX>0?1:-1;
+//                }
+//            }
         } else {
             hDeltaJump = 0;
         }
@@ -118,28 +145,24 @@ public class LinearSnapHelper extends SnapHelper {
             if (vectorForEnd.y < 0) {
                 vDeltaJump = -vDeltaJump;
             }
-            if((0==vDeltaJump||1==parameters.maxScrollNum)&&0!=velocityY){
-                if(currentView.getTop()>parameters.offset){
-                    vDeltaJump += 0<velocityY?0:-1;
-                }else{
-                    vDeltaJump += velocityY>0?1:-1;
-                }
-            }
+//            if(parameters.offset>lastY){
+//                vDeltaJump = 0;
+//            }
+//            if((0==vDeltaJump)&&0!=velocityY){
+//                if(currentView.getTop()>parameters.offset){
+//                    vDeltaJump += 0<velocityY?0:-1;
+//                }else{
+//                    vDeltaJump += velocityY>0?1:-1;
+//                }
+//            }
         } else {
             vDeltaJump = 0;
         }
-
-        OrientationHelper orientationHelper;
         int deltaJump;
-        int measure;
         if(layoutManager.canScrollVertically()){
             deltaJump = vDeltaJump;
-            orientationHelper = getVerticalHelper(layoutManager);
-            measure = currentView.getHeight();
         }else {
             deltaJump = hDeltaJump;
-            orientationHelper = getHorizontalHelper(layoutManager);
-            measure = currentView.getWidth();
         }
 
         int deltaThreshold = parameters.maxScrollNum;// (measure+parameters.offset);
@@ -161,46 +184,6 @@ public class LinearSnapHelper extends SnapHelper {
         }
 
         return targetPos;
-
-
-//        final int itemCount = layoutManager.getItemCount();
-//        if (itemCount == 0) {
-//            return RecyclerView.NO_POSITION;
-//        }
-//
-//        View mStartMostChildView = null;
-//        if (layoutManager.canScrollVertically()) {
-//            mStartMostChildView = findOffsetView(layoutManager, getVerticalHelper(layoutManager));
-//        } else if (layoutManager.canScrollHorizontally()) {
-//            mStartMostChildView = findOffsetView(layoutManager, getHorizontalHelper(layoutManager));
-//        }
-//
-//        if (mStartMostChildView == null) {
-//            return RecyclerView.NO_POSITION;
-//        }
-//        final int centerPosition = layoutManager.getPosition(mStartMostChildView);
-//        if (centerPosition == RecyclerView.NO_POSITION) {
-//            return RecyclerView.NO_POSITION;
-//        }
-//
-//        final boolean forwardDirection;
-//        if (layoutManager.canScrollHorizontally()) {
-//            forwardDirection = velocityX > 0;
-//        } else {
-//            forwardDirection = velocityY > 0;
-//        }
-//        boolean reverseLayout = false;
-//        if ((layoutManager instanceof RecyclerView.SmoothScroller.ScrollVectorProvider)) {
-//            RecyclerView.SmoothScroller.ScrollVectorProvider vectorProvider =
-//                    (RecyclerView.SmoothScroller.ScrollVectorProvider) layoutManager;
-//            PointF vectorForEnd = vectorProvider.computeScrollVectorForPosition(itemCount - 1);
-//            if (vectorForEnd != null) {
-//                reverseLayout = vectorForEnd.x < 0 || vectorForEnd.y < 0;
-//            }
-//        }
-//        return reverseLayout
-//                ? (forwardDirection ? centerPosition - 1 : centerPosition)
-//                : (forwardDirection ? centerPosition + 1 : centerPosition);
     }
 
     public View findOffsetView(RecyclerView.LayoutManager layoutManager) {
